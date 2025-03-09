@@ -1,0 +1,28 @@
+While I favour a containerize-all-the-things approach to new projects I still need to maintain systems that were designed several years ago around a combination of containers and host-based applications working together.
+
+In these situations it is common enough to execute <code>ps</code> or <code>iotop</code> on the host and see all the host and container processes together with no obvious indication of which processes belong to which containers.
+
+Here I will share some simple commands to help map the host-view of a containerised process to its container.
+
+First, given a host PID, how do I know which container it belongs to?
+<pre>$ cat "/proc/${host_pid}/cgroup"
+...
+4:cpu:/docker/769739f359ec192edf6c565f7756bb5ecabcfac3e691c2444794ab6a7d398e39
+...</pre>
+The <a href="https://www.kernel.org/doc/Documentation/filesystems/proc.txt">procfs</a> <code>cgroup</code> file will show the full Docker container ID which you can then use with <code>docker inspect</code> to get more container details.
+
+Vice-versa if you have the container ID and want to locate the host process(es) you can use:
+<pre>$ sudo ps -e -o pid,comm,cgroup | grep "/docker/${cid}"</pre>
+Lastly, if you're trying to debug a container process from the host and need the host-path to the process' binary I have found a method to has been working reliably.
+
+Unfortunately, because the procfs <code>exe</code> file is a symbolic link, not a hard link it won't resolve to the file within the container's layered file system so a few extra steps are required.
+
+First, read the symlink to get the fully-qualified container-path to the binary:
+<pre>$ exe=$(readlink "/proc/${host_pid}/exe")</pre>
+Next, parse the process' memory-mapped files to locate the first memory region referencing this file path:
+<pre>$ map=$(grep -m1 -F "${exe}" "/proc/${host_pid}/maps" | cut -d' ' -f1)</pre>
+Lastly read the symlink for this memory map from procfs' <code>map_files</code> directory:
+<pre>$ readlink "/proc/${host_pid}/map_files/${map}"</pre>
+This final output should look something like this:
+<pre>/var/lib/docker/aufs/diff/3cc533dae9a6cc96d6092844be3ce78c737db793cf1493b9f47e652e96bfd71e/bin/sleep</pre>
+Note that the long identifier in that path is not the container ID, nor is it available via <code>docker inspect</code>, although I'm sure someone else has posted online how to locate this path via other means.

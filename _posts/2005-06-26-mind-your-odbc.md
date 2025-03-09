@@ -1,0 +1,24 @@
+---
+layout: post
+permalink: http://blog.stangroome.com/?p=143
+title: Mind your ODBC
+description: None
+date: 2005-06-25 23:12:12 -0000
+last_modified_at: 2005-06-25 23:12:12 -0000
+publish: false
+pin: false
+categories:
+- Uncategorized
+tags: []
+---
+<![CDATA[
+
+I have planned to post about MYOB's developer support for some time and I was provoked by one of [Clarke Scott's](http://www.clarkescott.com/default.aspx) [recent blogs](http://www.clarkescott.com/PermaLink,guid,c2d7aa6f-9372-4a6a-a703-e9b286f422f5.aspx) to do it now. I have been working with a wholesale company to automate the export of data from their MYOB Premier company file to their website on a regular basis. They want their customers to be able to access current pricing and stock levels of all the products they distribute, and they want their customers to be able to view current back orders and recent invoices online.
+
+I have done plenty of work like this before for non-MYOB accounting systems and even MYOB RetailManager (which conveniently uses a Microsoft Access database). Unfortunately, every other MYOB product uses a proprietary database format, which, at the time I started this job, required the customer to pay $259 Australian per company file for an ODBC driver. The ODBC driver was read only and was incompatible with ADO.NET in certain situations. For documentation on the MYOB table structure, some code samples and three months forum access, MYOB Australia expected the developer to cough up around $900. I discovered however that MYOB USA provides table structure documentation (the "Data Dictionary") for free download from their website. A few tables have slightly different names and some tax related items are different but it is mostly identical to the Australian MYOB system. I decided to call MYOB Australia about this situation and their response was basically, "that's the way it is, live with it".
+
+Thankfully, in the last three months, MYOB Australia has improved their support for developers. They now provide the Data Dictionary, sample code, and tools for free download from the website. The ODBC driver has been updated and has hopefully been improved but I have not tested the ADO.NET problems yet. MYOB also have an excellent [Developer Partner Program](http://d2d.myob.com.au/) now. For just under $700 per annum you get an ODBC driver with write access, full access to MYOB's email and forum support, and your customers can use the ODBC driver with their company file free.
+
+If you are working with MYOB, or plan to, the partner program is excellent.
+
+]]>

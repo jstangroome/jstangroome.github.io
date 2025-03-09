@@ -1,0 +1,14 @@
+Firstly, why?
+
+* Web Application projects, Azure projects, and presumably several others already create ready-to-deploy packages in the drop folder
+* WPF projects, Windows Forms projects and console projects, etc, drop all their files in the root of the drop folder.
+* To do it manually would require following all non-GACed reference assemblies recursively and parsing the project files for files marked as Content or marked for Copy To Output, satellite assemblies, COM references, etc.
+* MSBuild already handles this for us, let's leverage it.
+
+How?
+
+* A light touch, avoid changing any system/framework build files, minimise the changes when they are made, keep the changes grouped together, keep them consistent and reusable.
+* Based on Jonathon Schuster's answer on the Stack Overflow question below
+<a href="http://stackoverflow.com/questions/2784335/how-can-i-get-tfs-2010-to-build-each-project-to-a-separate-directory">http://stackoverflow.com/questions/2784335/how-can-i-get-tfs-2010-to-build-each-project-to-a-separate-directory</a>
+
+<a href="http://www.jonathanpschuster.com/">http://www.jonathanpschuster.com/</a>

@@ -1,0 +1,17 @@
+I think PowerShell is a great and powerful language with very few limitations and when implementing a Module for PowerShell my default language of choice has been PowerShell itself for several reasons:
+<ul>
+	<li>Many Modules evolve from refactoring and reuse of existing PowerShell scripts so it makes sense to use the existing code instead of rewriting it in another language.</li>
+	<li>The Advanced Functions capability introduced by PowerShell 2.0 enables first-class Cmdlets and therefore Modules to be built, where as C# was required to achieve this in PSv1 days.</li>
+	<li>PowerShell's pipeline, native support for WMI, variety of drive providers, and loose type system makes it much quicker and cleaner to write certain kinds of code compared to C#.</li>
+	<li>The feedback loop when developing and testing Modules written with PowerShell is much quicker when there is no compile step and you don't have to worry about locking a Binary Module's DLL file.</li>
+	<li>Contributions such as bug fixes or new features from the wider PowerShell community are more likely if the Module is written with PowerShell as the source is immediately available and the users can use their own changes without additional steps.</li>
+</ul>
+However, as much as I believe in writing with PowerShell, for PowerShell wherever possible, I've been thinking that I may just have to consider using C# for developing PowerShell Modules more often because:
+<ul>
+	<li><a href="http://blogs.msdn.com/b/powershell/archive/2009/01/04/extending-and-or-modifing-commands-with-proxies.aspx">Proxy functions</a> are being promoted as a way for users to add features and fix "broken" behaviour in built-in Cmdlets. Modules developed with PowerShell will be affected by these changes and may introduce bugs unless every Cmdlet reference is fully qualified in the Module (eg Microsoft.PowerShell.Management\Get-ChildItem) which will lead to less maintainable code.</li>
+	<li>Even with PSv2's try{}catch{} structured error handling, I feel that the combination of terminating and non-terminating errors and ErrorActions can make writing resilient PowerShell scripts harder and less maintainable than the C# equivalent.</li>
+	<li>Implementing common parameters across multiple Cmdlets is done through copy-and-paste with PowerShell instead of the cleaner inheritance approach possible in C#.</li>
+	<li>Automated test frameworks for verifying module functionality are much more mature for C# than they are for PowerShell and even though a C# test framework could be used to test a Module implemented in PowerShell, I'm not sure this would be a pleasant development experience.</li>
+	<li>Performance critical code can potentially be more efficient when implemented in C# instead of PowerShell (although we can embed chunks of C# directly in PowerShell scripts if necessary).</li>
+</ul>
+Ultimately I don't think a definitive answer can be given one way or the other , it will depend on the nature of the module being developed. For example, one Module I have written is a wrapper for an existing .NET API and it doesn't use many of the built-in PowerShell Cmdlets itself so it works quite well developed with PowerShell itself. As an alternate example, the <a href="http://pscx.codeplex.com/">PowerShell Community Extensions Module</a> has a lot of code interacting with native APIs via P/Invoke and a large suite of automated tests that suits it well to being developed with C#.

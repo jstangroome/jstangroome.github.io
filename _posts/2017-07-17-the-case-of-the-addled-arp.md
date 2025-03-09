@@ -1,0 +1,19 @@
+---
+layout: post
+permalink: http://blog.stangroome.com/2017/07/17/the-case-of-the-addled-arp/
+title: The case of the addled ARP
+description: None
+date: 2017-07-17 12:09:11 -0000
+last_modified_at: 2017-07-17 12:09:11 -0000
+publish: true
+pin: false
+categories:
+- Uncategorized
+tags: []
+---
+In recent weeks we started receiving alerts whenever a new AWS EC2 Instance running Ubuntu 14.04 LTS was launched for a specific Auto Scaling Group. On average, one new instance would be provisioned per day but the fault would only occur for about one or two of the new instances per week. The alert was an indicator that the new instance was unable to communicate with the message broker located on another instance. However, after approximately 20 minutes the issue would self-resolve. Also, if we manually provisioned a new replacement instance, it would successfully communicate with the broker. With the short window of failure and no consistent period between occurrences so this problem continued through several operations shifts and staff members before a plan was established to capture more details of the problem. On the next alert we were able to investigate and establish several facts:
+    1. The affected instance was unable to communicate due to a connection timeout. It was sending TCP SYN packets and receiving no reply.
+    2. The message broker was receiving the TCP SYN packet from the affected instance and replying with a SYN+ACK packet but the MAC address on the reply packet did not match the MAC address on the incoming SYN packet.
+    3. Running `ip neigh show` on the message broker instance reported that the IP address of the affected instance was associated with an unrelated MAC address and was in the `STALE` state but occasionally also in the `REACHABLE` state.
+    4. The unrelated MAC address was not associated with any other instances running in the VPC nor any that had been recently terminated.
+At this point we setup two monitors on the message broker instance while we waited for the problem to self-resolve. The first was a `tcpdump` to capture all ARP traffic and the second was a shell script to continuously poll and record the ARP table. The ARP traffic capture contained very little and nothing at all helpful but the ARP table records were very interesting. While the affected instance was unable to connect to the message broker, the ARP table cycled through the states `REACHABLE` then `STALE` then `DELAY`​ and back to `REACHABLE` again, retaining the same incorrect MAC address association the whole time. The `DELAY` state never lasted as long as five seconds. At the moment when the problem self-resolved, the `DELAY` state did last for five seconds and then transitioned to the `PROBE` state, then to the `FAILED` state and finally back to `REACHABLE` but this time with the correct MAC address. This insight lead one of our team members to find [this Red Hat bug](https://bugzilla.redhat.com/show_bug.cgi?id=1450203) describing a Linux kernel issue that aligned with exactly the behaviour we were experiencing. Unfortunately the [fix for this bug wasn't merged](https://github.com/torvalds/linux/commit/29ba6e7400a317725bdfb86a725d1824447dbcd7) until Linux kernel 4.11 which was only released in May and [reportedly](https://insights.ubuntu.com/2017/06/15/kernel-team-summary-june-15-2017/) won't be officially available in Ubuntu until Artful Aardvark 17.10. Our assessment of all the stale ARP entries on the message broker combined with the known scaling behaviours of the messaging clients suggested that some entries had been there for at least 8 weeks. So this wasn't a by-product of replacing instances rapidly and recycling IP addresses in the subnet too quickly. As an interim solution we have implemented a cron job to remove any stale entries from the message broker's ARP table and this has prevented the alerts from re-appearing for several weeks now.  

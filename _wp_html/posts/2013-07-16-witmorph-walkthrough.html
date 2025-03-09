@@ -1,0 +1,47 @@
+In <a title="WitMorph – changing Team Foundation process templates in-place" href="http://blog.codeassassin.com/2013/07/16/witmorph-changing-team-foundation-process-templates-in-place/">my last post</a> I described the problem of trying to change the Process Template of an existing Team Project in Team Foundation Server and the open-source project I built to solve it, <a href="https://github.com/codeassassin/WitMorph">WitMorph</a>. In this post I want to demonstrate a simple walkthrough of the currently even simpler GUI.
+
+I have a Team Project, imaginatively named "Agile-6.1", and it was originally created with the "MSF for Agile Software Development 6.1" process template. I also have another Team Project, named "Scrum-2.1", and it was created with the "Microsoft Visual Studio Scrum 2.1" process template which should be no surprise.
+
+I am going to describe the process of converting the "Agile-6.1" Team Project to the Scrum template by using the "Scrum-2.1" Team Project as the definition of the goal. The reason for using another Team Project as the definition instead of the original process template is due to subtle differences between a template's structure and the resulting Team Project that I haven't addressed in WitMorph's differencing engine yet.
+
+The very first step is to pull and build the WitMorph solution and then run UI project. It should look like this:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2013/07/step1.png"><img class="alignnone size-full wp-image-428" alt="WitMorph UI" src="http://blog.stangroome.com/wp-content/uploads/2013/07/step1.png" width="595" height="373" /></a>
+
+Following the numbers I've added to the screenshot above, click each of the buttons to select:
+<ol>
+	<li>The "Agile-6.1" Team Project. Clicking the button will reveal the standard TFS Team Project dialog.</li>
+	<li>The "Scrum-2.1" Team Project. In my example both Team Projects are in the same collection but they could be on different TFS instances entirely.</li>
+	<li>The "Agile6.1_to_Scrum2.1.witmap" Process Map File. This file can be found in the WitMorph project source under the ProcessTemplateMaps folder<strong>*</strong>.</li>
+	<li>A file to which to save the generated action list.</li>
+</ol>
+It is important to note that when the "Generate Actions" button (5) is clicked, the two Team Projects will be queried for their current process metadata but no changes will be applied. After providing the required information and clicking the button the UI should look like this:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2013/07/step2.png"><img class="alignnone size-full wp-image-429" alt="Generate Actions" src="http://blog.stangroome.com/wp-content/uploads/2013/07/step2.png" width="558" height="579" /></a>
+
+The contents of the generated "witact" file are not intended for human consumption but it is fairly comprehensible. It describes the series of incremental steps required to convert any Team Project based on the Agile template to the Scrum template:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2013/07/step3.png"><img class="alignnone size-full wp-image-430" alt="Actions XML" src="http://blog.stangroome.com/wp-content/uploads/2013/07/step3.png" width="595" height="242" /></a>
+
+Now, we can apply the list of actions in this file to the "Agile-6.1" Team Project:
+<ol>
+	<li>Leave the "Agile-6.1" Team Project selected as per step 1 above, or re-select it if WitMorph has been restarted since the action list was generated. You could also choose a different project to convert if it is also based on the same Agile 6.1 process.</li>
+	<li>Select the action list file generated above as the "Input Actions File".<strong>**</strong></li>
+	<li>Specify an Output Path where the process of applying the actions will output a log and the intermediate work item type definitions (mainly for diagnosing issues).</li>
+	<li>Click "Apply Actions" to convert the Team Project to the new process template. <strong>WARNING:</strong> I highly recommend having a backup of the TFS collection database before doing this.<strong>***</strong></li>
+</ol>
+The WitMorph UI should look like this:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2013/07/step4.png"><img class="alignnone size-full wp-image-431" alt="Apply Actions" src="http://blog.stangroome.com/wp-content/uploads/2013/07/step4.png" width="477" height="243" /></a>
+
+Upon connecting<strong>****</strong> to the "Agile-6.1" Team Project with Visual Studio, you will find that all the existing User Story work items have become Product Backlog Items with all their original work item IDs, attachments, links, and history. You will also find that you can now create new Impediment work items instead of Issues and the Bug work items now have a Backlog Priority field among many other differences between the two templates.
+
+There is still a lot of room for improvement in WitMorph (eg to update the work item queries) and if you'd like to contribute, simply fork the GitHub repository and send a Pull Request.
+<h3>Footnotes</h3>
+*These process maps can be improved and shared by the community for common conversion scenarios. I'd like to build an editor for this file format in the future.
+
+**Aside from being able to re-use an action list for multiple conversions, the primary reason for separating the step of generating the list from applying the list is so that some steps can be excluded. For example, you may wish to keep a field that would otherwise be removed. Again, I'd like to build an editor for selecting actions to apply in the future.
+
+***I find it best to backup the collection database while the collection is detached. This requires a brief outage but can be automated to happen during periods of low activity and makes restoring much easier.
+
+****If you already had Visual Studio connected to the Team Project before conversion you may need to restart Visual Studio to force it to refresh the metadata.

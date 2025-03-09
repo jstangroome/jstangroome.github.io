@@ -1,0 +1,27 @@
+In general, an automated build server should be usable to build multiple projects and multiple revisions of a single project. An automated build server should also be disposable, it should not contain any special configuration that isn't already tracked in source control, and provisioning a new build server should not require hunting for the installers for specific versions of dependencies.
+
+By default however, the Windows Azure SDK for .NET doesn't work this way. To build an Azure project from a build server you need the full SDK installed and suddenly this means the build server is tied to only building projects targeting a specific version of the Azure SDK. If several projects share a single build server then all projects need to be upgraded to the new SDK when one project is upgraded and performing builds on maintenance branches becomes difficult if not impossible.
+
+Simply copying some Azure SDK files into a source-controlled "Dependencies" folder won't help much either because the (v1.6) build scripts make some assumptions:
+<ul>
+	<li>The Azure tools are located at a fixed path under the Program Files folder</li>
+	<li>The Azure SDK is located at a path referred to by a HKEY_LOCAL_MACHINE Registry key</li>
+	<li>A common .targets file has been installed in the MSBuild extensions folder so <em>every</em> project system-wide references it automatically</li>
+</ul>
+Finding and fixing these assumptions is required so that a source-controlled copy of the SDK will work but these assumptions can change (and have changed) in each new version of the SDK so it is important not to be tempted to edit the original files but instead utilise the various hook points in MSBuild to override these assumptions.
+
+Ideally the Azure SDK would just be a Nuget package but until the product team can be convinced to do this, I have published some scripts which allow you to build your own Nuget package of the Azure SDK with all the afore mentioned assumptions fixed. My scripts require a machine with the SDK already installed because I doubt I have the rights to redistribute original files.
+
+The<a href="https://bitbucket.org/jstangroome/windowsazurenugetpackage"> scripts are available in a Mercurial repository hosted on Bitbucket</a>. After cloning or downloading a copy of the repository, just run MSBuild in the root and it will gather the necessary SDK files from your system and produce a Nuget package in the "output" subfolder. From there you <em>might ideally</em> install the package in your Azure project (the *.ccproj file) using this command from the Package Manager Console:
+
+<code>Install-Package -Id Microsoft.WindowsAzure -Source [path to the "output" subfolder]</code>
+
+Unfortunately, at the time of writing this Nuget (also v1.6) doesn't support Azure projects so slightly more work is required. First, install the package into the target solution's "packages" folder using the "nuget.exe" command-line interface:
+
+<code>nuget.exe install Microsoft.WindowsAzure -Source [path to the "output" subfolder] -OutputDirectory [path to the solution "packages" folder]</code>
+
+The open the Azure project's ".ccproj" file for editing in a text editor and add the following line immediately after the opening &lt;Project ... &gt; element:
+
+<code>&lt;Import Project="..\packages\Microsoft.WindowsAzure.1.6\tools\Microsoft.WindowsAzure.Nuget.targets" /&gt;</code>
+
+Note that the relative path to the ".Nuget.targets" file may be slightly different depending upon project and solution directory structures. You can<a href="http://nuget.codeplex.com/workitem/1343"> vote to get Azure support added to Nuget here</a>.

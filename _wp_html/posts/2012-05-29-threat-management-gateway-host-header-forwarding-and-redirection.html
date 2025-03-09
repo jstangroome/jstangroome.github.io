@@ -1,0 +1,11 @@
+When using Forefront Threat Management Gateway 2010 (TMG) to expose an internal web server to the public Internet beware of the unexpected side-effects of the "Forward the original host header instead of the actual one (specified in the Internal site name field)" check box on the "To" tab in the properties dialog of a Web Publishing Rule.
+
+If the behaviour of the internal web server is to detect an incoming request over HTTP and respond with a <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection">3xx response</a> to a new <strong>HTTPS</strong> location (for all or only specific URLs) <strong>and</strong> the "Forward the original host header" option in TMG is checked, then TMG interferes and the HTTP Location header that is returned to the original client does not include the HTTPS scheme and the client's browser/user-agent gets caught in an <a href="http://en.wikipedia.org/wiki/URL_redirection#Redirect_loops">infinite redirection loop</a>.
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2012/05/forwardhost.png"><img class="alignnone size-full wp-image-385" title="Forward the original host header" src="http://blog.stangroome.com/wp-content/uploads/2012/05/forwardhost.png" alt="" width="404" height="484" /></a>
+
+Unchecking the "Forward the original host header" option for the rule and applying the changes fixes the issue and the redirection works correctly.
+
+I have been unable to find any official documentation on this behaviour and only two references to anything related. I found <a href="http://forums.isaserver.org/m_2002034241/mpage_1/key_/tm.htm">one post</a> on the <a href="http://www.isaserver.org/">isaserver.org</a> forums (with no responses) suggesting that this behaviour was introduced in ISA 2004 SP2 (ISA being the original name for TMG). The other reference is a <a href="http://support.microsoft.com/kb/925287">Microsoft Support KB article</a> describing that the request Host header passed from TMG to the internal web server can include the port number with the host name - if the port number is embedded I can imagine this impacting the scheme, but it's a stretch.
+
+Hopefully this post will help the next person hitting the same issue.

@@ -1,0 +1,23 @@
+On Google Compute Engine (GCE) the latest VM boot images (at the time of writing) for Ubuntu 14.04 and 16.04 (eg <code>ubuntu-1604-xenial-v20170811</code>) ship with a file at <a href="https://gist.github.com/jstangroome/be4bee805c97063c28869ff4d636ed26">/etc/sysctl.d/99-gce.conf</a> which contains:
+<pre>net.ipv4.ip_forward = 0</pre>
+This kernel parameter determines whether <a href="https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt">packets can be forwarded between network interfaces</a>. On its own, the presence of this line isn't a big deal.
+
+Separately, when you start the Docker daemon (at least in version 17.06.0-ce), it <a href="https://docs.docker.com/engine/userguide/networking/default_network/container-communication/#communicating-to-the-outside-world">sets this kernel parameter to 1</a> (assuming you haven't specified <code>--ip-forward=false</code> in the Docker configuration). Docker needs packet forwarding enabled so that Docker containers using the default bridge network can communicate outside the host.
+
+If you later execute <code>sysctl --system</code> or similar after has Docker has started, for example to apply a new value for the <a href="https://www.kernel.org/doc/Documentation/networking/nf_conntrack-sysctl.txt">nf_conntrack_max kernel parameter</a> that you've specified in another file under <code>/etc/sysctl.d/</code>, then the <code>ip_forward</code> parameter will revert to 0 care of GCE's default conf file.
+
+At this point you'll find your containers cannot reach the outside world, for example this will fail to resolve:
+<pre>docker run ubuntu:16.04 getent hosts google.com</pre>
+This will remain broken for all existing or new containers until you set the <code>ip_forward</code> parameter back to 1 manually or by restarting the Docker daemon.
+
+If you're using any Docker version since v1.8 (released about 2 years ago) you should see the following message when running a container with bridge networking if IP forwarding is disabled:
+<pre>WARNING: IPv4 forwarding is disabled. Networking will not work.</pre>
+Of course, that only helps if you're using <code>docker run</code> interactively and does not help if the parameter gets changed after the containers are already running.
+
+If you're in this situation, add your own file to <code>/etc/sysctl.d/</code> that follows <code>99-gce.conf</code> alphabetically (eg <code>99-luftballon.conf</code>) and ensure it contains:
+<pre>net.ipv4.ip_forward = 0</pre>
+You may also want to ensure the file has a trailing <code>LF</code> character to avoid any issues with processing it.
+
+You can check the current value of the <code>ip_forward</code> kernel parameter with one of these two commands:
+<pre>sysctl net.ipv4.ip_forward
+cat /proc/sys/net/ipv4/ip_forward</pre>

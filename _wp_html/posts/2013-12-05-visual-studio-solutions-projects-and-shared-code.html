@@ -1,0 +1,20 @@
+I have been having numerous discussions with a variety of people about shared code in .NET code bases and I decided to blog my thoughts on the topic here - partly to reduce repetition, partly to help me distill the concepts in my own mind.
+
+To clarify, these are my guidelines or rules of thumb. It is where I start when investigating options to improve handling shared code but I will bend these rules when required and I reserve the right to change my mind based on my future experiences.
+
+To begin, there seem to be two basic perspectives on the purpose of a Visual Studio Solution.
+<ol>
+	<li>A Solution is a container, a boundary. It includes everything required for a software system to be built and tested. The only dependencies external to the Solution are third party dependencies or internal dependencies from a package management system like NuGet.</li>
+	<li>A Solution is a view, a window. It includes only the necessary items to work with a particular aspect of a software system. Projects within a Solution will routinely be dependent on other Projects not in the Solution. There will often be multiple Solutions that overlap with, or completely encompass, other Solutions.</li>
+</ol>
+I subscribe to the first group. I believe this is the model that Visual Studio guides developers toward through its default behaviours and through the challenges that arise when veering away from this model. I believe that a new team member should be able to clone a clean working set of source from version control and build the Solution and have all they need within the IDE. I like that a successful build of the open Solution (mostly) indicates that I haven't accidentally changed or removed code used elsewhere.
+
+To follow, given a common scenario of two mostly discrete Solutions that currently share a common Project between them, I start asking:
+<ul>
+	<li><span style="line-height:1.5em;">Can the Project be moved into a new, third Solution and packaged as a NuGet package? The original Solutions then reference this shared Project by its Package from (private) NuGet Repository. This can lengthen the feedback cycle when debugging, so if this leads to a poor experience because the shared Project is a common source of issues, a better suite of Integration Tests in the third Solution may help. If the shared Project changes often to implement features rather than fix bugs this may not be a good option.</span></li>
+	<li><span style="line-height:1.5em;">Can the two Solutions be combined into one all-inclusive Solution? Would the new Solution then have too many Projects resulting a the build and/or test experience too slow or resource intensive? If the Project count is too high and code has been separated into Projects simply to enforce layer separation, perhaps some Projects can be consolidated and a tool like <a href="http://www.ndepend.com/">NDepend</a> used to enforce separation.</span></li>
+	<li>Do the two Solutions together represent too large a system? Is the coupling to the shared Project an indication of a design that would benefit from significant refactoring - for example, favouring composition over inheritance.</li>
+</ul>
+Finally, what is the value of sharing the common Project? In my experience, increased code reuse is associated with higher coupling. Duplication of the shared code instead may prove beneficial in other stages of the delivery cycle and reduce each Solutions influence/impact on the other.
+
+I am also reminded of <a href="http://paulstovell.com/blog/integration/scenario">Paul Stovell's short series of useful articles about Integration</a>. The <a href="http://paulstovell.com/blog/integration/shared-database">Shared Database</a> solution is an example where a Data Access Layer Project might be shared between two Solutions but the <a href="http://paulstovell.com/blog/integration/messaging">Messaging</a> approach is an example where the two Solutions could be much more independent.

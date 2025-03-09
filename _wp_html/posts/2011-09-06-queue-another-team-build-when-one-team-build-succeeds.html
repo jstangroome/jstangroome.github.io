@@ -1,0 +1,42 @@
+<strong>Update: <a title="Queue a Team Build from another and pass parameters" href="http://blog.stangroome.com/2014/02/19/queue-a-team-build-from-another-and-pass-parameters/">with Team Build 2013 you can even pass parameters to queued builds</a>.</strong>
+
+I have seen several Team Foundation Server environments where multiple build definitions exist in a single project and need to executed in a particular order. Two common techniques to achieve this are:
+<ul>
+	<li>Queue all the builds immediately and rely upon using a single build agent to serialize the builds. This approach prevents parallelization for improved build times and continues to build subsequent builds even when one fails.</li>
+	<li>Check build artifact(s) into source control at the end of the build and let this trigger subsequent builds configured for Continuous Integration. This approach can complicate build definition workspaces and committing build artifacts to the same repository as code is not generally recommended.</li>
+</ul>
+As an alternative I have developed a simple customization to TFS 2010's default build process template (the DefaultTemplate.xaml file in the BuildProcessTemplates source control folder) that allows a build definition to specify the names of subsequent builds to queue upon success. It only requires two minor changes to the Xaml file. The first is a line inserted immediately before the closing &lt;/x:Members&gt; element near the top of the file:
+<pre>    &lt;x:Property Name="BuildChain" Type="InArgument(s:String[])" /&gt;</pre>
+The second is a block inserted immediately before the final closing &lt;/Sequence&gt; at the end of the file
+<pre>    &lt;If Condition="[BuildChain IsNot Nothing AndAlso BuildChain.Length &amp;gt; 0]" DisplayName="If BuildChain defined"&gt;
+      &lt;If.Then&gt;
+        &lt;If Condition="[BuildDetail.CompilationStatus = Microsoft.TeamFoundation.Build.Client.BuildPhaseStatus.Succeeded]" DisplayName="If this build succeeded"&gt;
+          &lt;If.Then&gt;
+            &lt;Sequence&gt;
+              &lt;Sequence.Variables&gt;
+                &lt;Variable x:TypeArguments="mtbc:IBuildServer" Default="[BuildDetail.BuildDefinition.BuildServer]" Name="BuildServer" /&gt;
+              &lt;/Sequence.Variables&gt;
+              &lt;ForEach x:TypeArguments="x:String" DisplayName="For Each build in BuildChain" Values="[BuildChain]"&gt;
+                &lt;ActivityAction x:TypeArguments="x:String"&gt;
+                  &lt;ActivityAction.Argument&gt;
+                    &lt;DelegateInArgument x:TypeArguments="x:String" Name="buildChainItem" /&gt;
+                  &lt;/ActivityAction.Argument&gt;
+                  &lt;Sequence DisplayName="Queue chained build"&gt;
+                    &lt;Sequence.Variables&gt;
+                      &lt;Variable Name="ChainedBuildDefinition" x:TypeArguments="mtbc:IBuildDefinition" Default="[BuildServer.GetBuildDefinition(BuildDetail.TeamProject, buildChainItem)]"/&gt;
+                      &lt;Variable  Name="QueuedChainedBuild" x:TypeArguments="mtbc:IQueuedBuild" Default="[BuildServer.QueueBuild(ChainedBuildDefinition)]"/&gt;
+                    &lt;/Sequence.Variables&gt;
+                    &lt;mtbwa:WriteBuildMessage Message="[String.Format(&amp;quot;Queued chained build '{0}'&amp;quot;, buildChainItem)]" Importance="[Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.High]" /&gt;
+                  &lt;/Sequence&gt;
+                &lt;/ActivityAction&gt;
+              &lt;/ForEach&gt;
+            &lt;/Sequence&gt;
+          &lt;/If.Then&gt;
+        &lt;/If&gt;
+      &lt;/If.Then&gt;
+    &lt;/If&gt;</pre>
+You can see the resulting <a href="https://gist.github.com/1196590/">DefaultTemplate.xaml file here</a>. After applying these changes and checking-in the build process template file you can specify which builds to queue upon success via the Edit Build Definition windows in Visual Studio:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2011/09/capture.png"><img class="alignnone size-full wp-image-283" title="Edit Build Definition" alt="The new BuildChain build process parameter" src="http://blog.stangroome.com/wp-content/uploads/2011/09/capture.png" width="433" height="187" /></a>
+
+You can specify the names of multiple Build Definitions from the same Team Project each on a separate line. When the first build completes successfully, all builds listed in the BuildChain property will then be queued in parallel and processed by the available Build Agents. No checking is currently done for circular dependencies so be careful not to chain a build to itself directly or indirectly and create an endless loop.

@@ -1,0 +1,29 @@
+---
+layout: post
+permalink: http://blog.stangroome.com/2012/08/31/upgrade-visual-studio-scrum-1-0-team-projects-to-version-2-0-on-tfs-2012/
+title: Upgrade Visual Studio Scrum 1.0 Team Projects to version 2.0 on TFS 2012
+description: None
+date: 2012-08-31 05:39:41 -0000
+last_modified_at: 2012-09-02 22:03:41 -0000
+publish: true
+pin: false
+categories:
+- PowerShell
+- TFS
+tags: []
+---
+Team Foundation Server 2010 shipped with two default Process Templates, one for Agile and another for CMMI, but Microsoft also provided a third template for Scrum teams as [a separate download](http://visualstudiogallery.msdn.microsoft.com/59ac03e3-df99-4776-be39-1917cbfc5d8e). With the recent release of Team Foundation Server 2012, the latest version of this additional template (Microsoft Visual Studio Scrum 2.0) is not only included in-the-box but is also now the default template for new Team Projects. If you move from TFS 2010 to TFS 2012 and upgrade your existing Team Projects in the process, your existing Microsoft Visual Studio Scrum 1.0 Team Projects will stay as version 1.0. The new and very improved Web Access in TFS 2012 will give you the option to [modify the process of an existing project](http://msdn.microsoft.com/library/hh500409\(VS.110\).aspx) slightly to enable some new TFS 2012 features but your projects will still be mostly version 1.0. A feature-enabled Scrum 1.0 Team Project will still differ from a new Microsoft Visual Studio Scrum 2.0 Team Project in these aspects (of varying impact):
+    * Using Microsoft.VSTS.Common.DescriptionHtml field for HTML descriptions work items instead of the new HTML-enabled System.Description field.
+    * Missing ClosedDate field on Tasks, Bugs and Product Backlog Items.
+    * Missing extra reasons on Bug transitions.
+    * Sprint start and finish dates still in Sprint work items, instead of on Iterations.
+    * Queries still based on work item type instead of work item category.
+    * Old Sprint and Product Backlog queries.
+    * Missing the new "Feedback" work item query.
+    * Missing extra browsers and operating systems in Test Management configuration values.
+    * Old reports.
+While these differences may be subtle now, they could become critical when adopting third party tooling designed only to work with the latest TFS process templates, or when trying to upgrade to the next revision of TFS and making the most of its features. For me though, having existing projects stay consistent with new Team Projects I create is probably the most important factor. As such I've scripted most of the process for applying these changes to existing projects as they can be rather tedious, especially when you have many Team Projects. [The script and related files are available on GitHub](https://github.com/codeassassin/Tfs2012ProcessUpgrade). To use the script, open a PowerShell v3 session on a machine with Team Explorer 2012 installed. The user account should be a Collection Administrator. The upgrade process may run quicker if run from the TFS Application Tier, in which case the PowerShell session should also be elevated. Ensure your PowerShell execution policy allows scripts. Run the following command:
+  
+        _< path>_\UpgradeScrum.ps1 -CollectionUri http://_tfsserver_ :8080/tfs/_SomeCollection_ -ProjectName _SomeProject_
+
+Swap the placeholder values to suit your environment. The ProjectName parameter can be omitted to process all Team Projects or you can specify a value containing wildcards (using * or ?). Aside from fixing most of the differences listed above, the script will copy Sprint dates to their corresponding Iterations and also copy the description HTML from the old field to the new System.Description field. The script will also map the default Team to the existing areas and iterations. The Sprint work item type will remain in case you have saved important Retrospective notes as the new TFS 2012 template doesn't not have a corresponding field for this information. One step my upgrade script doesn't do yet is upload the new Reports but that can be achieved just as easily with the "[addprojectreports](http://msmvps.com/blogs/vstsblog/archive/2010/08/16/how-to-add-a-project-portal-and-reports-to-a-team-project.aspx)" capability of the [TFS Power Tools](http://visualstudiogallery.msdn.microsoft.com/27832337-62ae-4b54-9b00-98bb4fb7041a) (the Beta version works with RTM). Also, for anyone who used TFS 11 Beta or TFS 2012 RC and has created Team Projects based on the Preview 3 or Prevew 4 versions of the Scrum 2.0 template, my script will also upgrade those projects to the RTM version of the template. I later plan to implement a similar script to upgrade existing Agile 5.0 Team Projects to the new Agile 6.0 process template. **Warning:** If you have customized your work item type definitions from their original state (eg added extra fields) there is potential for the upgrade to fail or maybe even data to be lost. However I have upgraded at least 10 Team Projects so far, all successfully. As the script is written in PowerShell, the implementation is easily accessible for verification or modification to suit your needs.

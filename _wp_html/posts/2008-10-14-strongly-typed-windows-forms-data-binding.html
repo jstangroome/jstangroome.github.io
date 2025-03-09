@@ -1,0 +1,25 @@
+&lt;![CDATA[<p>I was recently inspired by a <a href="http://stackoverflow.com/questions/152250/get-class-property-name" target="_blank">question about property names in strings</a> on <a href="http://stackoverflow.com/" target="_blank">Stack Overflow</a>. The problem is that Windows Forms data binding takes&nbsp;the names of properties to bind as string parameters and if these properties change or are removed, errors won't surface until the bound control is exercised at run-time. So, using <a href="http://www.paulstovell.com/blog/" target="_blank">Paul's</a> <a href="http://www.paulstovell.com/blog/strongly-typed-property-names" target="_blank">strongly typed property name ideas</a>, I propose this alternative syntax for programmatic data binding in Windows Forms:</p><pre class="c#">nameTextBox.Bind(t =&gt; t.Text, aBindingSource, (Customer c) =&gt; c.FirstName);
+// Binds the Text property on nameTextBox to the FirstName property
+// of the current Customer in aBindingSource, no string literals required.</pre>
+<p>And the following code to implement support for it:</p><pre class="c#">public static class ControlExtensions
+{
+    public static Binding Bind&lt;TControl, TDataSourceItem&gt;(this TControl control, Expression&lt;Func&lt;TControl, object&gt;&gt; controlProperty, object dataSource, Expression&lt;Func&lt;TDataSourceItem, object&gt;&gt; dataSourceProperty) where TControl: Control
+    {
+        return control.DataBindings.Add(PropertyName.For(controlProperty), dataSource, PropertyName.For(dataSourceProperty));
+    }
+}
+
+public static class PropertyName
+{
+    public static string For&lt;T&gt;(Expression&lt;Func&lt;T, object&gt;&gt; property)
+    {
+        var member = property.Body as MemberExpression;
+        if (null == member)
+        {
+            var unary = property.Body as UnaryExpression;
+            if (null != unary) member = unary.Operand as MemberExpression;
+        }
+        return null != member ? member.Member.Name : string.Empty;
+    }
+}</pre>
+<p>Thoughts? Overkill?</p>]]&gt;

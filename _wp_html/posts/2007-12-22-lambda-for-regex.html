@@ -1,0 +1,19 @@
+&lt;![CDATA[
+
+A few weeks ago I was trying to put together a quick regular expression for converting an entire English sentence into Pascal (or Headed Camel) Case. What would have been rather trivial in Perl was a little ugly in C#.
+
+Tonight, in a typical midnight haze, I realised I could use a lambda expression to tidy it up a bit. Here is the result, short and simple, presented in unit test form:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">[TestMethod]
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">public</span> <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">void</span> ShouldRemoveSpacesAndCapitaliseWords()
+{
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;"> const</span> <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span> original <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"Should remove spaces and capitalise words"</span>;
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;"> const</span> <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span> expected <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"ShouldRemoveSpacesAndCapitaliseWords"</span>; </span>
+
+Regex rx <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">new</span> Regex(<span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">@"(\s*)\b(\w)"</span>);
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;"> string</span> result <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> rx.Replace(original, m =&gt; m.Groups[2].Value.ToUpper());
+
+Assert.AreEqual(expected, result);
+}
+
+]]&gt;

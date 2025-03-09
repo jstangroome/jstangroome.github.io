@@ -1,0 +1,29 @@
+Recently, <a href="https://twitter.com/mjhilton_">Matt Hilton</a> blogged about <a href="https://www.mjhilton.net/2017/09/06/source-control-antipatterns/">Source Control Antipatterns</a> which included the practice of commenting code instead of deleting the code.
+
+As wholeheartedly as I agree with deleting code, I know that a popular objection is that deleted code is harder to find. While it might be harder than your favourite editor's Find In Files feature, it is important to know how to use the tools central to your development workflow.
+
+For my work, and seemingly the majority of projects today, git is the version control tool of choice. So I'm sharing some git commands here that I have found useful for locating deleted code. I'm using the <a href="https://github.com/varnishcache/varnish-cache">Varnish Cache repository</a> for my examples if you want to try them yourself.
+
+If you know some text from the code that was deleted, you can find the commit where it was deleted. In this example I'm looking for when the C structure named <code>smu</code> was deleted.
+<pre>$ git log -G "struct +smu" --oneline
+
+766dee0 Drop long broken umem code</pre>
+If you know the name of a file that was deleted, but aren't sure which directory the file was in, you can find the commit when the file was deleted with:
+<pre>$ git log --oneline -- **/storage_umem.c
+
+766dee0 Drop long broken umem code
+b07c34f include cleanup - found by FlexeLint
+75615a6 When I grow up, I want to learn to program in C</pre>
+&nbsp;
+
+If you're not even sure what the deleted file was named but just want to see recent commits with deleted files, you can use:
+<pre>$ git log --diff-filter=D --summary
+
+commit f4faa6e3c431d6ccf581f5683af56008e4d4be10
+Author: Federico G. Schwindt &lt;fgsch@lodoss.net&gt;
+Date: Fri Mar 10 18:59:14 2017 +0000
+
+Fold r00936.vtc into vcc_action.c tests
+
+delete mode 100644 bin/varnishtest/tests/r00936.vtc</pre>
+There is a lot more you can do with <a href="https://git-scm.com/docs/git-log">git log</a> than just find deleted code but hopefully these examples are a useful start.

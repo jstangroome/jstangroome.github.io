@@ -1,0 +1,29 @@
+In <a href="http://blog.stangroome.com/2015/08/18/adding-https-economically/">my last post I described how I added HTTPS to my blog</a> and mentioned that implementing HTTP <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning">Public Key Pinning</a> (HPKP) was still pending.
+
+The purpose of HPKP is to protect your site in the event that a trusted Certificate Authority issues a certificate for your site to the wrong person. This can happen, and has happened, due to a process error, or due to the CA's systems being breached. Either way it can enable a 3rd party to Man-In-The-Middle attack your site with often no indication that something is wrong. HPKP allows you to inform the browser that only certain public keys that you've pre-approved should be accepted, even if all other aspects of the certificate appear valid.
+
+The reason I didn't get HPKP done up front is because the process is somewhat arduous even though the end result is simply serving an extra HTTP response header of the format:
+<pre>Public-Key-Pins: pin-sha256="..fingerprint.."; pin-sha256="..another.."; max-age: 1234;</pre>
+A single response header may appear trivial at first but there is some complexity waiting to trip you up.
+
+Firstly, the fingerprint is different to any of the other fields you may normally see in a typical certificate information dialog. The fingerperint is a SHA-256 (or SHA-1) digest of the public key (and some public key metadata) which is then base64 encoded. To generate this fingerprint typically involves<a href="http://tools.ietf.org/html/rfc7469#appendix-A"> piping between two or more consecutive <code>openssl</code> commands</a> and OpenSSL isn't renowned for its clarity.
+
+Starting with an existing certificate, a certificate signing request (CSR), or a private key will each change which collection of OpenSSL commands you need to execute to generate the fingerprint. There is at least <a href="https://projects.dm.id.lv/s/pkp-online/calculator.html">one online tool to help</a> with this (thanks <a href="https://twitter.com/DavisMosenkovs">Dāvis</a>), but be wary of using any online tools which require the private key.
+
+To make life a little easier for <a href="https://www.section.io/">section.io</a> users, I added the calculated fingerprint to the HTTPS configuration page:
+
+<a href="https://blog.stangroome.com/wp-content/uploads/2015/09/section-hpkp-fingerprint.png"><img class="alignnone size-full wp-image-565" src="https://blog.stangroome.com/wp-content/uploads/2015/09/section-hpkp-fingerprint.png" alt="section-hpkp-fingerprint" width="660" height="347" /></a>
+
+The second gotcha is that the header is not valid with only a single fingerprint of the public key from the certificate currently in use on your site. The <a href="http://tools.ietf.org/html/rfc7469#section-4.3">specification (RFC 7469) requires</a> that you also include at least one extra fingerprint of a backup public key that you can switch to in the event of a lost or stolen private key. And it is good idea to include fingerprints for two backup keys.
+
+Before you assume that this means you need to buy more certificates, you should note that you only need the fingerprint of the <em>public key component</em>. This means you can generate a key pair, or a CSR, with which you will later purchase a new certificate only in the event that you need to replace your current certificate. Key pairs and CSRs do not expire - although, technically, your chosen key length or algorithm may become less secure as time passes and technology progresses.
+
+The third issue to be mindful of is the <code>max-age</code> directive in the header. This is the number of seconds that a user-agent should cache these fingerprints. Do not conflate this with the validity period of your signed certificate, as certificates expire on a fixed date but the HPKP header is valid for a fixed period starting from the moment the browser parses the header.
+
+With a <code>max-age</code> value equivalent to 365 days, a user could visit your site one month before your certificate expires and then persist your <code>Public-Key-Pins</code> header data for the next 12 months, well past when certificate's validity. But this is OK. You will likely renew your certificate with the same public key, or renew it with one of the backup public keys already mentioned in your HPKP header.
+
+It is just important to realise that the HPKP <code>max-age</code> is different from the certificate validity and browsers may limit the upper age limit. Ensure that you balance the age and the number of backup keys you think you may need in that age period. And when you consume a backup key from your HPKP header, you should update your header with a new backup key that will be slowly acknowledged by browsers as their cache of your HPKP header expires.
+
+With all that, I added the HPKP response header to my site with the following Varnish configuration:
+
+<a href="https://gist.github.com/jstangroome/a25e81a7b30cc58dc1b0"><img class="alignnone size-full wp-image-566" src="https://blog.stangroome.com/wp-content/uploads/2015/09/hpkp-vcl.png" alt="hpkp-vcl" width="660" height="88" /></a>

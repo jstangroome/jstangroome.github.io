@@ -1,0 +1,15 @@
+Now that I get to work with a TFS 2010 Lab Management environment most days, I find myself building various virtual machines to replicate the  production environments of our clients for testing. With many different clients and projects, the range of virtual machine operating systems expands exponentially as matrix of core OS version, processor architecture, service pack, IE version, and other minor variations. However, for any particular configuration, I'll also want multiple copies so naturally I want to make use of System Center Virtual Machine Manager's VM Template Library.
+
+However, creating a template from a VM using the SCVMM Administrator Console, without destroying the original VM, is death by a thousand clicks:
+<ol>
+	<li>Shutdown the VM.</li>
+	<li>Dismount any media in the VM's virtual DVD drives.</li>
+	<li>Clone the VM via an eight-page wizard.</li>
+	<li>Wait for the cloning to complete.</li>
+	<li>Convert the cloned VM into a template with a six-page wizard.</li>
+	<li>Wait for the sysprepping to complete.</li>
+	<li>Restart the original VM.</li>
+</ol>
+I tire of such tedium very quickly and as such, I've scripted the above process with PowerShell and the SCVMM Snapin. You can access the <a href="http://gist.github.com/506252">Export-VMTemplate script</a> I've written on gist.github. If you open a PowerShell window from the toolbar in the SCVMM console, you can execute the script like this:
+<pre>.\Export-VMTemplate.ps1 -VM 'MyOriginalVm' -TemplateName 'NewTemplateName' -LibraryServer 'MyLibSvr'</pre>
+Hopefully the script itself, or at least some of the concepts within, will be useful to someone else.

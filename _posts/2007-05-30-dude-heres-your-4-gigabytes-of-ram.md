@@ -1,0 +1,14 @@
+---
+layout: post
+permalink: http://blog.stangroome.com/?p=112
+title: Dude, Here's Your 4 Gigabytes Of RAM!
+description: None
+date: 2007-05-30 11:20:19 -0000
+last_modified_at: 2010-07-20 00:10:28 -0000
+publish: false
+pin: false
+categories:
+- Uncategorized
+tags: []
+---
+I [recently purchased](http://www.codeassassin.com/blog/PermaLink,guid,36a2fc42-0361-4887-b327-aaa71cb8a8f2.aspx) a [HP dc7700 SFF PC](http://www.google.com/search?q=HP+Compaq+dc7700+Small+Form+Factor+PC) for my home office and installed Windows Vista Business x64. I regularly use Visual Studio 2005 and SQL Server 2005 x64 on this system for bringing work home with me and for doing personal development projects. I have also been testing the Orcas Beta 1 Virtual PC image that Microsoft has made available. Based on my experiences with Windows XP 32-bit, I figured 2GB of memory would be sufficient for my new machine. I've since discovered though that Vista x64 and SQL x64 are very memory hungry and I usually have to close several applications just to free the 1GB required by the Orcas VPC. Not being happy with the performance hit from paging, I started looking into installing more memory. [Jeff Atwood](http://www.codinghorror.com/blog/) had [posted about the 4GB problem](http://www.codinghorror.com/blog/archives/000811.html) only a few weeks earlier and was one of the motivators for choosing a 64-bit OS and the dc7700 has the Intel Q965 Express chipset and four DDR2 slots, both of which support a maximum of 4GB. However I could not find any reliable documentation that suggested whether the BIOS in the dc7700 supported the [memory remapping feature](http://support.microsoft.com/kb/929605) that would allow Vista x64 to utilise all the RAM. Thankfully, I have an awesome contact in the HP reseller channel who was able get my query passed along to the right people and get confirmation on whether it would work or not. I was a little impatient and I had already ordered the new RAM before the answer came back. The new memory modules arrived today and I am pleased to say, as was promised by my HP guy, if you own a HP dc7700 like mine, you can install a full 4GB in the system and Vista x64 will happily see the whole lot. Well, it actually only reports 4031MB but I'm not going to complain about 65MB... yet.

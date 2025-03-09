@@ -1,0 +1,14 @@
+Integrating PowerShell scripts into older style processes that are only designed to call out to executables or batch files (or “command scripts” as they have been known since NT4) can be slightly messy primarily due to the argument parsing semantics around double-quotes and file paths with spaces. I often end up writing a simple command script to wrap each PowerShell script to simplify this but it is tedious and repetitive and I’ve finally decided to create a generic script that works for any PowerShell script.
+
+Simply save the following code as a text file and save it with the same name as your PowerShell script but replace the .ps1 extension with a .cmd extension.
+<pre>@echo off
+setlocal
+set tempscript=%temp%\%~n0.%random%.ps1
+echo $ErrorActionPreference="Stop" &gt;"%tempscript%"
+echo ^&amp; "%~dpn0.ps1" %* &gt;&gt;"%tempscript%"
+powershell.exe -command "&amp; \"%tempscript%\""
+set errlvl=%ERRORLEVEL%
+del "%tempscript%"
+exit /b %errlvl%</pre>
+Now if your script is called “Get-Something.ps1”, you can simply run it like this:
+<pre>Get-Something “c:\some path\some.file” –SecondArg 3.14</pre>

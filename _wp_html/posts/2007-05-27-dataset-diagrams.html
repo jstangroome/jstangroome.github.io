@@ -1,0 +1,10 @@
+&lt;![CDATA[<p>We often use Strongly-Typed DataSets in our applications at work. They can be a useful tool but they have their limitations too. Today, I'm not going to discuss the pros and cons of DataSets versus some other DAL concept. Today I'm just writing about a useful tip for working with growing DataSets.</p>
+<p>As changes are made to tables and relationships in the DataSet Designer, eventually all the diagrams become unordered and relationship links begin to wander like vines. Unfortunately, I have never been able to find in Visual Studio an option to re-layout the diagram automatically for optimum table sizes and minimum relationship intersections. You don't have to shuffle them around manually though,&nbsp;there is another way:</p>
+<ol>
+<li>Open the project containing the DataSet and Show All Files in the Solution Explorer.
+<li>Ensure the DataSet designer windows are closed.
+<li>Open the DataSet's .XSS file in a code window (it should be XML with &lt;Shape&gt; elements among others).
+<li>Clear the entire contents of the XSS file, leaving it blank.
+<li>Save the XSS file and close the window.
+<li>Open the DataSet's designer window, you should find all the tables and relationships nicely arranged.</li></ol>
+<p>It's been a busy day but I should have another overly long post ready in time for next week.</p>]]&gt;

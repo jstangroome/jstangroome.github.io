@@ -1,0 +1,65 @@
+I recently encountered a server where SQL Server had somehow been installed to the admin user's mapped U: drive instead of drive C:. As a result all SQL file paths in the registry referred to "U:\Program Files\Microsoft SQL Server\..." but for most users (including the SQL service account) the U: drive did not map to C:. This prevented Management Studio from working and probably many other issues that weren't as visible.
+
+I wanted a fast way to find all "U:\Program Files" references in the registry and repoint them to drive C:. The standard Windows regedit.exe only supports Find but not Replace (and there were a lot of keys to fix) and third party registry tools available on the Internet fall into the untrustworthy category for fixing servers.
+
+I ended up writing a quick C# console app to perform the job.The C# app was able to solve the problem and the server works properly now but I felt there should be an easier way: PowerShell.
+
+I've spent an evening hammering out a basic pair of find and replace functions for PowerShell. They don't make as much use of PowerShell's declarative pipelined nature as I'd like but they work well. The replace function is particular dangerous if you misuse it so be careful. Perhaps I will implement the -WhatIf switch some day.
+
+The find function is simply named Find-RegistryValue. At the moment the function only looks in values, not keys or value names because these are already quite easy to search on with basic PowerShell one-liners. As input the function expects a "seek" parameter being the text sought and optionally a path to a registry key to begin searching from. If the "regpath" is not provided it defaults to Get-Location and if it is not a registry path it throws.
+
+The find function will return an array of Hashtable objects with all the information you should require: the RegistryKey, the name of the value in the key, and the value itself containing the sought text. The code follows:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">function Find-RegistryValue (
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $seek <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $(<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"seek required."</span>),
+[System.Management.Automation.PathInfo] $regpath <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> (Get-Location) ) {</span>
+
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($regpath.Provider.Name -ne <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"Registry"</span>) { <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"regpath required."</span> }
+
+$keys <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @(Get-Item $regpath -ErrorAction SilentlyContinue) `
+<span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">+</span> @(Get-ChildItem -recurse $regpath -ErrorAction SilentlyContinue);
+
+$results <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @();
+
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">foreach</span> ($key <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">in</span> $keys) {
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">foreach</span> ($vname <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">in</span> $key.GetValueNames()) {
+$val <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $key.GetValue($vname);
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($val -match $seek) {
+$r <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @{};
+$r.Key <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $key;
+$r.ValueName <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $vname;
+$r.Value <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $val;
+$results += $r;
+}
+}
+}
+
+$results;
+}
+
+The replace function is named Replace-RegistryValue and relies on the find function to work, resulting in very similar behaviour. It requires the text sought and the registry path just like the find function but it also requires the "swap" parameter which is the text to replace the sought value with. It calls the find function itself and uses the output to first promote the key to a writable instance then replace the value and return the results. The results include the RegistryKey, the name of the value in the key, the old value and also the new value. Here is the code:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">function Replace-RegistryValue (
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $seek <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $(<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"seek required."</span>),
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $swap <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $(<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"swap required."</span>),
+[System.Management.Automation.PathInfo] $regpath <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> (Get-Location) ) {</span>
+
+$find <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> Find-RegistryValue -seek $seek -regpath $regpath;
+$results <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @();
+
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">foreach</span> ($target <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">in</span> $find) {
+$nval <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $target.Value -replace $seek, $swap;
+$r <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @{};
+$r.Key <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $target.Key;
+$r.ValueName <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $target.ValueName;
+$r.OldValue <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $target.Value;
+$r.NewValue <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $nval;
+$results += $r;
+$wKey <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> (Get-Item $r.Key.PSParentPath).OpenSubKey($r.Key.PSChildName, <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"True"</span>);
+$wKey.SetValue($target.ValueName, $nval);
+}
+
+$results;
+}
+
+If you have any suggestions for improving the code or perhaps even a better naming convention for the pair, please leave a comment.
