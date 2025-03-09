@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2013/07/16/witmorph-walkthrough/
 title: WitMorph - Walkthrough a Conversion
 description: None

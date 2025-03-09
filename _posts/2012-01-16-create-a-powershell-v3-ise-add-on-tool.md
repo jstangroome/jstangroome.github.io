@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2012/01/16/create-a-powershell-v3-ise-add-on-tool/
 title: Create a PowerShell v3 ISE Add-on Tool
 description: None

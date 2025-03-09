@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/06/25/always-upgrade-ixgbevf-on-aws-ec2/
 title: Always upgrade ixgbevf on AWS EC2
 description: None

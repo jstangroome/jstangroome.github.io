@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2007/10/13/find-duplicate-files-with-powershell/
 title: Find Duplicate Files With PowerShell
 description: None

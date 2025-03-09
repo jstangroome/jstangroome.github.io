@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/08/16/beware-docker-and-sysctl-defaults-on-gce/
 title: Beware Docker and sysctl defaults on GCE
 description: None

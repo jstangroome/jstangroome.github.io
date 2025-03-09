@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2018/07/12/sennheiser-presence-headset-review/
 title: Sennheiser Presence headset review
 description: None

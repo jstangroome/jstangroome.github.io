@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2011/09/06/queue-another-team-build-when-one-team-build-succeeds/
 title: Queue another Team Build when one Team Build succeeds
 description: None

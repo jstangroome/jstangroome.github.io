@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2018/09/05/minikube-with-wsl-kubectl/
 title: minikube with WSL kubectl
 description: None

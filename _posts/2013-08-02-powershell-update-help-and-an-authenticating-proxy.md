@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2013/08/02/powershell-update-help-and-an-authenticating-proxy/
 title: PowerShell Update-Help and an Authenticating Proxy
 description: None

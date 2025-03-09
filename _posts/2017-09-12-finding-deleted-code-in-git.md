@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/09/12/finding-deleted-code-in-git/
 title: Finding deleted code in git
 description: None

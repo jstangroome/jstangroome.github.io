@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/07/17/the-case-of-the-addled-arp/
 title: The case of the addled ARP
 description: None

@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2013/11/26/nuget-reference-paths-for-projects-in-multiple-solutions/
 title: NuGet Reference Paths for Projects in Multiple Solutions
 description: None

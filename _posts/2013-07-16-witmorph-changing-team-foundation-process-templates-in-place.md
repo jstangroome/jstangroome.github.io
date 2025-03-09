@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2013/07/16/witmorph-changing-team-foundation-process-templates-in-place/
 title: WitMorph - changing Team Foundation process templates in-place
 description: None

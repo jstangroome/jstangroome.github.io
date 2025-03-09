@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/12/05/inspecting-docker-container-processes-from-the-host/
 title: Inspecting Docker container processes from the host
 description: None

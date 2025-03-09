@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2018/06/25/wslpath-and-mktemp/
 title: wslpath and mktemp
 description: None

@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2014/02/10/powershell-select-xml-versus-get-content/
 title: PowerShell Select-Xml versus Get-Content
 description: None

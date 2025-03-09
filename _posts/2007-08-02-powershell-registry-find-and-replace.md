@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2007/08/02/powershell-registry-find-and-replace/
 title: PowerShell Registry Find and Replace
 description: None

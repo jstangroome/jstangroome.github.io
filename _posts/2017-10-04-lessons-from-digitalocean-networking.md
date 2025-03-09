@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2017/10/04/lessons-from-digitalocean-networking/
 title: Lessons from DigitalOcean Networking
 description: None

@@ -1,5 +1,4 @@
 ---
-layout: post
 permalink: http://blog.stangroome.com/2018/06/25/minikube-and-wsl/
 title: minikube and WSL
 description: None
