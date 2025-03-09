@@ -1,0 +1,22 @@
+Visual Studio 2008 Team System's built-in Code Coverage is nice but the standard results window only allows you to drill down through each assembly, then namespace, class, and finally method. You can't easily find the class with the least blocks covered, something I needed to do the other day.
+
+I found <a href="http://blogs.msdn.com/ms_joc/articles/406608.aspx">John Cunningham's blog about "off-road" code coverage</a> and was pleased to see that Microsoft had provided an assembly in Visual Studio that can be used to parse the *.coverage file output by a test run. I followed his example to write a PowerShell script to provide basic access to the data.
+
+You can <a href="http://www.codeassassin.com/public/Get-CodeCoverageDataSet.zip">download my script here</a>.
+
+Then you can use it like this:
+<pre class="ps1">$CoverageDS = ./Get-CodeCoverageDataSet.ps1 "data.coverage"
+$CoverageDS.Class `
+  | Sort-Object -Property BlocksNotCovered -Descending `
+  | Select-Object `
+    -First 25 `
+    -Property `
+      BlocksNotCovered, `
+      @{
+        Name = "Namespace";
+        Expression = {
+          $CoverageDS.NamespaceTable.FindByNamespaceKeyName($_.NamespaceKeyName).NamespaceName
+        }
+      }, `
+      ClassName</pre>
+The coverage file is typically found in the TestResults\[TestRunName]\In\[ComputerName]\ folder. You can easily perform queries over methods or lines rather than classes by using the other tables in the returned dataset. You can also use the ConvertTo-Html cmdlet to easily create a report for your team.

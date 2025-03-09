@@ -1,0 +1,7 @@
+I realised a few hours after posting <a href="http://blog.codeassassin.com/2010/08/11/automatic-tfs-check-out-for-powershell-ise/">my last entry</a> about a PowerShell ISE profile script, that I failed to describe to people new to the ISE environment, how to include the script as part of their ISE profile so it is always available.
+
+Simply explaining how to determine the path of your ISE profile by checking the value of the $Profile variable from within the ISE would be boring, so instead I wrote another script to automatically download the first script from <a href="https://github.com/">GitHub</a>, and add it to your profile.
+
+This <a href="http://gist.github.com/519103">new script</a> can simply be copied and pasted into the ISE's Command Pane (Ctrl+D) and your profile will be opened and updated, ready to be saved. Once saved, you can either restart the ISE or simply run " . $profile " (without quotes) from the Command Pane.
+
+You will hopefully notice in this new script, that my usual attention to neatness and verbosity has been replaced with terseness due to the purpose of this script being a use once and throw away item. I had considered writing it as a single line but quickly regained my senses.

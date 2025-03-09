@@ -1,0 +1,7 @@
+I have been using an external USB hard drive to take backup copies of certain files on several machines. Each machine has different drive configurations though so the USB drive will be assigned different drive letters on each machine.
+
+I could have found an unused drive letter common to all the machines and assign it to USB drive on the first use but that's no fun. I decided to do it the PowerShell way. I wrote a small function to find a System.IO.DriveInfo object by providing the volume label and then I can get the drive letter and pass it to Copy-Item to do the work.
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">function Get-DriveInfo ([<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $label <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $(<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"Please specify a volume label."</span>)) {
+[System.IO.DriveInfo]::GetDrives() <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> ? { $_.IsReady -eq $True -and $_.VolumeLabel -match $label }
+}</span>

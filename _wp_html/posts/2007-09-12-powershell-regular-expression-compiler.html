@@ -1,0 +1,45 @@
+As an exercise in the mostly useless, I decided it would be interesting to try my hand at writing a PowerShell script to compile a regular expression pattern to a .NET assembly. I sure someone has already created a NAnt or MSBuild task to do this but I felt this would be a good way to increase my familiarity with PowerShell.
+
+The script requires the RegEx pattern and an output type name and full namespace to work. You can optionally pass an AssemblyName but if omitted the type and namespace will be used to form the output file name. You can also specify the -ignoreCase or -multiLine switches to enable that behaviour on your expression. There are other options that probably should be supported but they can be easily added if you actually have a use for this. Without further delay, here is the code:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">param
+(
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $pattern <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>,
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $typeName <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>,
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $fullNamespace <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>,
+[System.Reflection.AssemblyName] $assemblyName <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">null</span>,
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">switch</span>] $ignoreCase,
+[<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">switch</span>] $multiLine
+)</span>
+
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($pattern -eq <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>) { <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> (<span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"-pattern required"</span>); }
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($typeName -eq <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>) { <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> (<span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"-typeName required"</span>); }
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($fullNamespace -eq <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">""</span>) { <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">throw</span> (<span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"-fullNamespace required"</span>); }
+
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($assemblyName -eq $<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">null</span>)
+{
+$assemblyName <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> New-Object System.Reflection.AssemblyName `
+($fullNamespace <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">+</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"."</span> <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">+</span> $typeName);
+$assemblyName.Version <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> New-Object System.Version (1, 0);
+}
+
+$sysRx <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> @{};
+$sysRx.Namespace <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"System.Text.RegularExpressions"</span>;
+$sysRx.RegEx <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> [System.Text.RegularExpressions.RegEx];
+$sysRx.RegExOptions <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> [System.Text.RegularExpressions.RegExOptions];
+
+$options <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $sysRx.RegExOptions::None;
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($ignoreCase) { $options <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $options -bor $sysRx.RegExOptions::IgnoreCase; }
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">if</span> ($multiLine) { $options <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $options -bor $sysRx.RegExOptions::Multiline; }
+
+$info <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> New-Object ($sysRx.Namespace+<span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">".RegexCompilationInfo"</span>) `
+($pattern, $options, $typeName, $fullNamespace, $<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">true</span>);
+
+$popDir <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> [System.Environment]::CurrentDirectory;
+[System.Environment]::CurrentDirectory <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $PWD;
+$sysRx.RegEx::CompileToAssembly($info, $assemblyName);
+[System.Environment]::CurrentDirectory <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $popDir;
+
+Here is an example usage:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">./Compile-RegEx.ps1 <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"\s+"</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"Spaces"</span> <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"CodeAssassin.RegEx"</span> -ignoreCase</span>

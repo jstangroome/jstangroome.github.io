@@ -1,0 +1,19 @@
+<img class="size-full wp-image-238 alignright" title="Mark In Use" src="http://blog.stangroome.com/wp-content/uploads/2010/09/markinuse.png" alt="Screenshot of how to mark a lab environment as &quot;in use&quot;." width="190" height="157" />Microsoft Test Manager in Team Foundation Server 2010 enables users to mark a lab environment as "in use" with their name, time stamp, and a comment.
+
+Other people can then see this and contact the user first if they'd also like to test, redeploy or otherwise interrupt a lab environment.
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2010/09/markedinuse.png"><img class="alignnone size-full wp-image-239" title="Marked &quot;In Use&quot;" src="http://blog.stangroome.com/wp-content/uploads/2010/09/markedinuse.png" alt="Screenshot of a lab environment marked as &quot;In Use&quot;" width="365" height="68" /></a>
+
+However, if a user manually queues a Lab build from Visual Studio Team Explorer, or a Lab build is triggered by a schedule or a check-in, this marker is not visible and the Lab build will execute, redeploying the environment and most likely upsetting the user who was already using the environment.
+
+As a solution to this, I have modified the default lab build process template to include a new parameter to specify whether the build should fail if the environment has been marked as "in use".
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2010/09/parameters.png"><img class="alignnone size-full wp-image-240" title="Fail If Environment Is In Use parameter" src="http://blog.stangroome.com/wp-content/uploads/2010/09/parameters.png" alt="Screenshot of the added build process parameter" width="595" height="141" /></a>
+
+Thankfully, most of the hard work has already been done in the form of the out-of-the-box Workflow activities for Lab Management, and I just needed to add a small chunk of XAML to the existing LabDefaultTemplate.xaml file in my Team Project's "BuildProcessTemplates" source control folder. The<a href="http://gist.github.com/593319"> full customised template is here</a>, but the core of the change was this simple code:
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2010/09/code.png"><img class="alignnone size-full wp-image-242" title="code" src="http://blog.stangroome.com/wp-content/uploads/2010/09/code.png" alt="" width="595" height="190" /></a>
+
+And now the lab build will fail when the environment is marked "in use"...
+
+<a href="http://blog.stangroome.com/wp-content/uploads/2010/09/failed.png"><img class="alignnone size-full wp-image-243" title="failed" src="http://blog.stangroome.com/wp-content/uploads/2010/09/failed.png" alt="" width="508" height="135" /></a>

@@ -1,0 +1,15 @@
+I have been working almost completely on the Linux platform for the last six months as part of my new job. While so much is new and different from the Windows view of the world, there is also a significant amount that is the same, not surprisingly given the hardware underneath is common to both.
+
+Just recently, while working on a new open source project, I discovered a particular nuance in a behavioural difference at the core of the two platforms. This difference is in how a new process is started.
+
+When one process wants to launch another process, no matter which language you're developing with, ultimately this task is performed by an operating system API. On Windows it is <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx">CreateProcess</a> in kernel32.dll and on Linux it is <a href="http://linux.die.net/man/2/execve">execve</a> (and friends), typically combined with fork.
+
+The Windows API call expects a single string parameter containing all the command-line arguments to pass to the new process, however the Linux API call expects a parameter with an array of strings containing one command-line argument in each element. The key difference here is in where the responsibility lies for tokenising a string of arguments into the array ultimately consumed in the new process' entry point, commonly the "argv" array in the "main" function found in some form in almost every language.
+
+On Windows it is the new process, or callee, that needs to tokenise the arguments but the standard C library will normally handle that, and for other scenarios the OS provides <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb776391(v=vs.85).aspx">CommandLineToArgvW</a> in shell32.dll to do the same thing.
+
+On Linux though it is the original process, or caller, that needs to tokenise the arguments first. Often in Linux it is the interactive shell (eg bash, ksh, zsh) that has its own semantics for handling quoting of arguments, variable expansion, and other features when tokenising a command-line into individual arguments. However, at least from my research, if you are developing a program on Linux which accepts a command-line from some user input, or is parsing an audit log, there is no OS function to help with tokenisation - you need to write it yourself.
+
+Obviously, the Linux model allows greater choice in the kinds of advanced command-line interpretation features a shell can offer whereas Windows provides a fixed but consistent model to rely upon. This trade-off embodies the fundamental mindset differences between the two platforms, at least that is how it seems from my relatively limited experience.
+
+PowerShell starts to blur the lines somewhat on the Windows platform as it has its own parsing semantics yet again but this applies mostly to calling Cmdlets which have a very different contract from the single entry point of processes. PowerShell also provides a <a href="http://msdn.microsoft.com/en-us/library/system.management.automation.language.parser.aspx">Parser</a> API for use in your own code.

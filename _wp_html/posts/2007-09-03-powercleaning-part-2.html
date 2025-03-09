@@ -1,0 +1,21 @@
+Each day I live with wanting to make full use of excess storage space to keep a record of every file that has ever existed in all it's versions and the conflicting need to have a neat and tidy file system without any junk sitting around.
+
+Recently, the desire to have a ClickOnce deployment folder with only the latest version in it has won. With only the most recently published version within, the folder is a much more manageable size for distributing to other deployment servers.
+
+However, it can be tedious to ensure only the appropriate files are deleted when cleaning a deployment folder manually, and automating the process is infinitely better. I have put together a basic PowerShell function to handle the situation.
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">function Clean-ClickOnceApplication ([<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $Path <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> (Get-Location), [<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">switch</span>] $WhatIf <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">false</span>)
+{
+($current, $oldList) <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> Get-ChildItem -path (Join-Path $Path <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"*"</span>) -include <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"*.application"</span> `
+<span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> ? {$_.Name -match <span style="font-size:11px;color:#666666;font-family:Courier New;background-color:#e4e4e4;">"_\d+_\d+_\d+_\d+\."</span> } <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> sort LastWriteTime -desc;
+<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">foreach</span> ($old <span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">in</span> $oldList) {
+$oldFolder <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> $old.Name.Substring(0, $old.Name.Length <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">-</span> $old.Extension.Length);
+Remove-Item (Join-Path $Path $oldFolder) -recurse -WhatIf:$WhatIf;
+Remove-Item $old -WhatIf:$WhatIf;
+}
+}
+</span>
+
+Simply pass the ClickOnce deployment folder as the -Path parameter (or omit to assume the current folder) and optionally enable the -WhatIf switch to test which files and folders would have been deleted.
+
+The script currently uses the time stamps of the .application files rather than the version numbers but unless someone has been messing with the digitally-signed files this shouldn't be a problem. If it really needs to be handled by version number, I have some ideas for handling that.

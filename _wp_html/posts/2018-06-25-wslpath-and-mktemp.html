@@ -1,0 +1,29 @@
+The Windows Subsystem for Linux (aka WSL or Bash on Ubuntu on Windows) provides a fantastic reproduction of a local Linux environment without needing a virtual machine.
+
+Even better than a virtual machine, WSL includes a lot of conveniences for interoperating with the host Windows file system and processes. That is, I can access my C: drive via <code>/mnt/c/</code> and I can pop calc via <code>calc.exe</code>.
+
+Naturally, the nature of file paths in Linux and Windows are quite different so WSL performs some translations where it can (e.g. for the current working directory) and provides the <code>wslpath</code> utility for explicit conversions where necessary.
+
+Recently I discovered that even though the root filesystem of my particular WSL installation is accessible from Windows (via <code>%LocalAppData%/lxss/rootfs</code> in my case), WSL will not translate just any path within Linux to a path within this rootfs directory. And this is <a href="https://github.com/Microsoft/WSL/issues/3146">because WSL is designed</a> with the idea that Windows processes should not modify WSL files.
+
+However I work with various version controlled scripts shared amongst developers on Mac, Linux, and Windows (via Cygwin mostly) that use <code>/tmp/</code> as a staging area (via <code>mktemp</code>) and when using WSL, Windows processes don't see this directory. If the current working directory is in <code>/tmp/</code>, the working directory of the Windows process will become the Windows user profile directory instead. And running <code>wslpath -w /tmp/</code> just returns <code>Result not representable</code>.
+
+To avoid modifying the shared scripts to be WSL-aware, I instead converted my WSL tmp directory to be mounted from the Windows host file system via the following set of commands.
+
+First, define the directory to use as WSL's tmp, I chose <code>C:\wsltemp\</code> out of convenience, but it could be any path you prefer.
+<pre>$ mkdir -p /mnt/c/wsltmp
+$ chmod 1777 /mnt/c/wsltmp # tmp dir should have the Sticky-bit set
+$ sudo chown root: /mnt/c/wsltmp
+</pre>
+Also, to ensure Linux' case-sensitivity is honoured for this directory, from an elevated PowerShell, run:
+<pre>&gt; fsutil.exe file setCaseSensitiveInfo c:\wsltmp enable
+</pre>
+While NTFS has supported opt-in case-sensitivity for a very long time, it has only recently <a href="https://blogs.msdn.microsoft.com/commandline/2018/02/28/per-directory-case-sensitivity-and-wsl/">supported setting it per directory</a>.
+
+Finally, define the mount in WSL and mount it:
+<pre>printf '\n/mnt/c/wsltmp\t/tmp\tnone\tbind\t0\t0\n' | sudo tee -a /etc/fstab
+sudo mount -a
+</pre>
+Now your WSL session, and future sessions (assuming you haven't <a href="https://blogs.msdn.microsoft.com/commandline/2018/02/07/automatically-configuring-wsl/">disabled mountFsTab</a>), will have a <code>/tmp/</code> directory which will be correctly translated for Windows processes.
+
+<strong>Warning:</strong> if you use ssh-agent in WSL, mounting <code>/tmp/</code> to a DrvFS volume instead of LxFS will mean the ssh-agent socket (in <code>/tmp/ssh-*/agent.*</code>) will <a href="https://blogs.msdn.microsoft.com/commandline/2018/02/07/windowswsl-interop-with-af_unix/">not be available for WSL processes</a> to connect, it will only be accessible by Win32 processes and therefore not useful for typical scenarios.

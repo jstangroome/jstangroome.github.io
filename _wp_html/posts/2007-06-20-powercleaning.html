@@ -1,0 +1,8 @@
+I've often wanted to easily delete all old files below a folder that haven't been modified for a while. I've written a very small PowerShell function to do just that. By default it emulates the Disk Cleanup tool in Windows and deletes all files older than one week from the environment temp folder.
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">function Remove-TemporaryItems ([<span style="font-size:11px;color:blue;font-family:Courier New;background-color:transparent;">string</span>] $path <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> ($env:TEMP), [TimeSpan] $age <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> (New-Object System.TimeSpan 7, 0, 0, 0) ) {
+$files <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">=</span> Get-ChildItem $env:TEMP -recurse <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> `
+Where-Object { ! $_.PSIsContainer -and $_.LastWriteTime.Add($age) -le [DateTime]::Now };
+$files <span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> Remove-Item;
+$files;
+}</span>

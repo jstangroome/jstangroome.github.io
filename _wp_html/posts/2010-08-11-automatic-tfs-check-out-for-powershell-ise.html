@@ -1,0 +1,13 @@
+I work with a lot of PowerShell scripts, it's the fun part of my job. I do most of my editing using the <a href="http://technet.microsoft.com/en-us/library/dd315244.aspx">PowerShell ISE</a>, primarily because it is <a href="http://www.useit.com/alertbox/defaults.html">the default</a>, but also because it has great syntax highlighting, tab completion, and debug support. Additionally, all of my scripts are in source control: sometimes <a href="http://mercurial.selenic.com/">Mercurial</a>, occasionally <a href="http://git-scm.com/">Git</a>, but mostly <a href="http://msdn.microsoft.com/en-us/vstudio/ff637362.aspx">Team Foundation Server</a> (TFS).
+
+The way TFS works though, is that all files in your local workspace are marked as read-only until you Check-Out for editing. When working on TFS-managed files in Visual Studio, the check-out is done automatically as soon as you begin typing in the editor. The PowerShell ISE however has no idea about TFS and will let you edit to your heart's content until you eventually try to save your changes and it fails due to the read-only flag.
+
+But I've developed a solution...
+
+I've written a <a href="http://gist.github.com/518638">PowerShell ISE-specific profile script</a> that performs a few simple things:
+<ol>
+	<li>Checks if you have the TFS client installed (eg Team Explorer).</li>
+	<li>Registers for ISE events on each open file and any files you open later.</li>
+	<li>Upon editing of a file, if it is TFS-managed then checks it out.</li>
+</ol>
+The end result is the same TFS workflow experience from within the PowerShell ISE as Visual Studio provides.

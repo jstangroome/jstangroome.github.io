@@ -1,0 +1,27 @@
+<div>I am currently preparing our deployment processes for our most recent software product at work. A fair portion of it involves executing SQL scripts to install and update SQL Server 2005 databases. The deployment will ultimately be performed to several sites by staff who are less familiar with SQL Server than the development team.</div>
+<div></div>
+<div>At the moment it involves executing the SQLCMD tool from the command line with appropriate parameters to connect to the server, process the script and output a log. However, I feel that this is just one more error-prone step that should be avoided. Some time ago I read about <a href="http://en.wikipedia.org/wiki/Polyglot_(computing)">Polyglots on Wikipedia </a>and I was inspired. I thought I would try to write a batch file that also contained a SQL script. The ultimate goal would be a single-file that could be double-clicked and the script would run and the log would be created.</div>
+<div></div>
+<div>This meant it must be written so the batch command interpreter would ignore the SQL and the SQLCMD tool would ignore the batch commands. The trick was finding the keywords and structures in each language that had similar syntax. After several attempts I settled on GOTO, proving that it isn't totally <a href="http://www.acm.org/classics/oct95/">harmful</a>.</div>
+<div></div>
+<div>Here is a base example of my solution that you can use to create your own self executing SQL scripts. Just put it in a file with a ".cmd" extension and change as appropriate:</div>
+<div></div>
+<div><span style="color:#808080;font-family:'Courier New', Courier, monospace;">:setvar NUMBEROFROWS 15</span></div>
+<div></div>
+<div><span style="font-family:'Courier New', Courier, monospace;"><span style="color:#993300;">GOTO startofpolyglotsqlbatch</span> <span style="color:#000080;">/*
+</span><span style="color:#008000;">:startofpolyglotsqlbatch
+@echo off
+sqlcmd.exe -S <span style="color:#808080;">MySqlServer</span> -E -e -i "%~f0" -o "%~f0.log"
+more "%~f0.log"
+goto endofpolyglotsqlbatch
+:: </span><span style="color:#000080;">*/
+startofpolyglotsqlbatch:</span></span></div>
+<div><span style="color:#808080;font-family:'Courier New', Courier, monospace;">USE MyDb;
+GO</span></div>
+<div><span style="color:#808080;font-family:'Courier New', Courier, monospace;">SELECT TOP $(NUMBEROFROWS) * FROM MyTable;
+GO</span></div>
+<div><span style="font-family:'Courier New', Courier, monospace;"><span style="color:#000080;">/*
+</span><span style="color:#008000;">:endofpolyglotsqlbatch
+:: </span><span style="color:#000080;">*/</span></span></div>
+<div></div>
+<div>I have added some colour to highlight how the code is interpretted. The <span style="color:#993300;">initial GOTO </span>is parsed by both the batch command processor and SQLCMD but goes to a different destination for each. The <span style="color:#008000;">green text</span> is only seen and processed by the batch parser and the <span style="color:#000080;">blue text </span>is only seen and processed by SQLCMD. The <span style="color:#808080;">grey text </span>can be replaced with content relevant to your script. This is designed to only work with SQL Server 2005 and only on Windows XP, Windows Server 2003, or later.</div>

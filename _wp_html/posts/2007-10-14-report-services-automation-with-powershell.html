@@ -1,0 +1,22 @@
+In late September <a href="http://www.paulstovell.com" target="_blank">Paul Stovell</a> wrote about a <a href="http://web.archive.org/web/20080608210256/www.paulstovell.com/blog/reporting-services-automation" target="_blank">set of VB.NET scripts</a> he prepared to help deploy reports to SQL Server Reporting Services. If you've ever had the displeasure of deploying SSRS reports without Visual Studio then you'll understand how much it sucks.
+
+Paul went to the effort to write individual scripts for creating folders and data sources on the server and uploading report definitions and configuring permissions. With Paul's work simple command scripts can then be used deploy reports.
+
+However these command scripts still need to be written and they end up containing much of the same information as can be found in the .rptproj project file and the .rds data source files. I despise the idea of maintaining any sort of configuration information in more than one place so adding to the deploy command script whenever I add a report to the project in Visual Studio just makes me cringe.
+
+Additionally, as Paul briefly mentions, MSBuild (and therefore Team Build) does not support Report Services projects so, once again, to deploy your reports as part of Continuous Integration you need to have separate tools.
+
+Today I constructed a lengthy PowerShell script to take a Report Services .rptproj project file and output a command script that utilises <a href="http://www.codeassassin.com/public/ssrs-paul-stovell.zip">Paul's VB.NET scripts</a> to deploy the reports as per the project settings. Due to the size of the script rather than publishing it inline, you can <a href="http://www.codeassassin.com/public/Deploy-SqlReports.zip" target="_blank">download it here</a>.
+
+The script accepts three parameters. ProjectFile is the path to .rptproj file for the reports you want to deploy. If you omit this parameter the script uses the first report project file it finds in the current directory. The second parameter, ConfigurationName tells the script which project configuration to use for the target server URL and destination folders. If you omit this parameter the script uses the first configuration defined in the project. The last parameter SearchPaths is a list of paths for the script to search when locating both rs.exe and Paul's .rss files. The SearchPaths parameter is automatically combined with the environment PATH variable and may be omitted.
+
+Here is an example usage:
+
+<span style="font-size:11px;color:black;font-family:Courier New;background-color:transparent;">PS C:\Users\Jason\Dev\MyReports&gt; .\Deploy-SqlReports.ps1 `
+-ProjectName MyReports.rptproj `
+-ConfigurationName Release `
+-SearchPaths "C:\Tools\Report Services\" `
+<span style="font-size:11px;color:red;font-family:Courier New;background-color:transparent;">|</span> Out-File deploy.cmd -Encoding ASCII;
+</span>
+
+As always, my PowerShell skills are slowly improving and this script is not necessarily perfect in either robustness or efficient use of PowerShell. Hopefully it will be as useful to you as it has been to me and any changes you need should be easily made. Please leave a comment with your thoughts and suggestions.

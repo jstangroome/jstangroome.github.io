@@ -1,0 +1,26 @@
+<span style="color:#ff0000;"><strong>Update:</strong></span> <a href="http://forums.microsoft.com/msdn/User/Profile.aspx?UserID=833470&amp;SiteID=1">Philip Kelley</a> from Microsoft, <a href="https://blogs.msdn.com/buckh/archive/2007/01/10/five-things-about-me.aspx">creator of TFPT</a>, has kindly informed me that the July 2008 release of the TFS Power Tools is <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=00803636-1d16-4df1-8a3d-ef1ad4f4bbab&amp;displaylang=en">now available for download</a>. This new version includes enhancements to TFPT TreeClean that allow you to specify which files to include or exclude and as such solves the main problem my TreeClean PowerShell script was created for. The output format of the new TreeClean also renders this script incompatible but the general concepts used by the script may still be useful.
+
+<hr size="2" />I like the Team Foundation Server 2008 Power Tools, there are some great additions in there. One particular utility, TreeClean, has a great concept but is a little overzealous for my tastes.
+
+The purpose of TreeClean is to find all local files in your workspace folders that do not exist in source control and then allow you to delete all of them. The problem is that it includes *.user files in its find results and the delete option is all or nothing. The list of files can also be rather overwhelming.
+
+Thankfully we can get some more control by piping the results through PowerShell, starting with a simple script like this:
+<p class="code">$ProgFiles = $Env:ProgramFiles ;
+$ProgFiles32 = (Get-Item "Env:ProgramFiles(x86)").Value ;
+if (-not [String]::IsNullOrEmpty($ProgFiles32)) { $ProgFiles = $ProgFiles32 ; }</p>
+<p class="code">$TFPTEXE = Join-Path -Path $ProgFiles `
+-ChildPath "Microsoft Team Foundation Server 2008 Power Tools\TFPT.exe" ;
+if (-not (Test-Path -Path $TFPTEXE)) { throw "TFPT.EXE not found." ; }</p>
+<p class="code">[string]$Root = Resolve-Path -Path (Get-Location) ;</p>
+<p class="code">&amp; $TFPTEXE treeclean `
+| Where-Object { $_ -like ($Root + "*") } `
+| Get-Item -Force ;</p>
+Once we have this script saved we can get more information from the results. For example, we can get count and list rogue files by extension:
+<p class="code">TreeClean.ps1 | group Extension</p>
+We can exclude directories:
+<p class="code">TreeClean.ps1 | ? { -not $_.PSIsContainer }</p>
+And finally we can delete everything but *.user files:
+<p class="code">TreeClean.ps1 | ? { $_.Extension -ne ".user" } | Remove-Item</p>
+Now I can clean all the junk from my workspace but keep all my user-level project settings. However, while sorting through the extension-grouped report, looking for files to check-in before cleaning, there was a lot of noise from the build outputs. My quick solution:
+<p class="code">gci -inc *.sln -rec | % { MSBuild /t:Clean $_ }</p>
+It also has the nice side effect of significantly reducing your workspace folder size if you want to zip it up and send it somewhere.

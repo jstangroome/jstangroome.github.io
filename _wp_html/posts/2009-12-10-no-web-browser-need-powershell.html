@@ -1,0 +1,15 @@
+I recently found myself on a Windows Server 2003 machine without a functioning web browser and PowerShell wasn’t installed either.
+
+No problem, I just opened notepad and started typing:
+<pre>echo class Program { public static void Main() { &gt;"%~dpn0.cs"
+echo using (var wc = new System.Net.WebClient()) { &gt;&gt;"%~dpn0.cs"
+echo wc.UseDefaultCredentials = true; &gt;&gt;"%~dpn0.cs"
+echo wc.DownloadFile(@"http://download.microsoft.com/download/1/1/7/117FB25C-BB2D-41E1-B01E-0FEB0BC72C30/WindowsServer2003-KB968930-x86-ENG.exe", @"%~dpn0.installer.exe");}}} &gt;&gt;"%~dpn0.cs"
+"%systemroot%\microsoft.net\framework\v3.5\csc.exe" /out:"%~dpn0.exe" "%~dpn0.cs"
+"%~dpn0.exe"
+"%~dpn0.installer.exe"</pre>
+Saved it as a command script and double-clicked it. PowerShell v2 installer downloads and runs, bam!
+
+This would require tweaking for other processor architectures, other operating system versions, or older .NET installations.
+
+Thanks to <a href="http://twitter.com/tathamoddie">@tathamoddie</a> for the proxy-friendly fix.

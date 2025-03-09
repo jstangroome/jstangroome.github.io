@@ -1,0 +1,19 @@
+<a href="http://notgartner.wordpress.com/" target="_blank">Mitch</a>'s presentation about "TFS Virtualization and Advanced Build Techniques" was my highlight for day one of Code Camp SA.
+
+Mitch suggested that one of the major benefits of virtualizing Team Foundation Server was the ability to rollback the whole server at any point. While that is certainly helpful if the service packs don't install right the first time, the benefit I've found personally is being able to pick up the whole VHD and drop it on another Virtual Server machine without any reconfiguration. Great for hardware failures.
+
+Mitch also suggested getting a *big* server to host the virtual TFS and use the slack space to host additional virtual build servers. We toyed with a build server once and based on performance I figured a physical machine would be best but Mitch demonstrated a great idea combining multiple virtual build servers with a false TFS build agent to auto-redirect to a free, pre-cleaned build server.
+
+In fact, the <a href="http://www.readify.com.au/" target="_blank">Readify</a> team have some great TFS tools available to get the most from the system:
+<ul>
+	<li><a href="http://notgartner.wordpress.com/tag/projects/tfs-integrator/" target="_blank">TFS Integrator</a></li>
+	<li><a href="http://notgartner.wordpress.com/tag/projects/tfs-deployer/" target="_blank">TFS Deployer</a></li>
+	<li><a href="http://www.holliday.com.au/display/ShowJournal?moduleId=349905&amp;categoryId=47050" target="_blank">TFS Bug Snapper</a></li>
+	<li><a href="http://www.paulstovell.net/blog/index.php/scenario-coverage-analyser-for-tfs/" target="_blank">Scenario Coverage Analyser</a></li>
+</ul>
+Mitch showed how, with these tools and some PowerShell glue, you can have a complete, automated process to go from a check-in, automatic build, to update dependencies, rebuild those, deploy for QA, then deploy to production. Nice.
+
+With a lot of VB in our production code we've been held back from a CI system by the <a href="http://sstjean.blogspot.com/2006/11/msbuild-cant-find-secondary-references.html" target="_blank">MSBuild secondary reference issue</a> but a quick chat with Mitch after the presentation cleared that up:
+<blockquote>Me: <em>"Doctor, it hurts when I do this."</em>
+
+Mitch: <em>"Well, don't do that."</em></blockquote>

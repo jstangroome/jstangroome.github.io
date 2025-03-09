@@ -1,0 +1,17 @@
+I develop services that run on Kubernetes. During development <a href="https://github.com/kubernetes/minikube">minikube</a> provides an convenient way to run a local Kubernetes "cluster" regardless of whether you use Windows, OS X, or a Linux distribution as your host OS.
+
+Day-to-day I use minikube on Windows 10 and I prefer to use the Windows Subsystem for Linux (WSL) bash shell to have a scripting environment consistent with my colleagues, some of whom do not use Windows, and consistent with the CI system.
+
+The Linux binary of minikube isn't very useful in WSL since it doesn't support the Hyper-V driver and the Virtualbox driver cannot deal with the path differences it sees within WSL compared to those reported by <code>VboxManage.exe</code>.
+
+However, when running the Windows <code>minikube.exe</code> binary, many of the commands (e.g. <code>start</code>, <code>stop</code>, <code>ip</code>, <code>dashboard</code>) just work without any special configuration. Furthermore, creating a symlink so minikube can be executed on the PATH without the <code>.exe</code> extension easily improves the default experience. Beyond these initial commands though, some extra effort is required.
+
+SSH can be a little flakey with <code>minikube ssh</code> so I find it better to create an alias to use WSL's ssh client:
+<pre>ssh -a -i "$(wslpath -u "$(minikube ssh-key)")" -l docker "$(minikube ip)"</pre>
+You may get an error from this SSH command that the permissions of the identity file are too open. This is fixed in two steps. Firstly ensure you have added <code>metadata</code> to the <a href="https://blogs.msdn.microsoft.com/commandline/2018/02/07/automatically-configuring-wsl/">automount options</a> in your <code>/etc/wsl.conf</code> and restart your WSL session.
+
+Secondly, change WSL's view of the permissions of the key file:
+<pre>chmod 0600 "$(wslpath -u "$(minikube ssh-key)")"</pre>
+The <code>minikube docker-env</code> command doesn't recognise the WSL environment and outputs the PowerShell environment commands instead. This can be worked around by passing the <code>--shell bash</code> arguments but the <code>DOCKER_CERT_PATH</code> environment variable value won't work with the docker Linux binary as-is and the Windows binary needs the <code>WSLENV</code> environment variable set appropriately. These extra steps are enough to justify <a href="https://gist.github.com/jstangroome/f45d7d746a7f440d9684de7bb2b7c07a">a helper script which I've published as a GitHub Gist</a>. With this script dot-sourced, both the Windows and Linux binaries for the Docker client will work with Minikube's Docker daemon.
+
+Lastly, use the Windows binary for <code>kubectl</code>. The paths for Kubernetes certificates in the <code>.kube/config</code> file make it difficult to use the kubectl Linux binary and so far I haven't found a problem with the Windows version.

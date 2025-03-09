@@ -1,0 +1,13 @@
+&lt;![CDATA[
+
+<img style="margin-right:2em;margin-bottom:2em;border:0;" src="http://www.codeassassin.com/blog/content/binary/WindowsLiveWriter/DirtyPictures_90/roadworkmap_1.png" border="0" alt="Example roadworks map" width="240" height="145" align="left" /> Frustrated by the lack of up-to-date data for my <a href="http://www.codeassassin.com/blog/PermaLink,guid,6119fac2-2e5d-4764-b99c-1253360c66c7.aspx" target="_blank">TomTom</a>, I started poking around the web for various sorts of local information. I discovered that the <a href="http://www.transport.sa.gov.au/" target="_blank">Department for Transport</a> has a <a href="http://www.transport.sa.gov.au/quicklinks/metro_country_roadworks.asp" target="_blank">page listing current roadwork sites</a>. Unfortunately, it is only available in HTML form.
+
+Upon inspecting the source however, I discovered patterns in the data suggesting it is automatically driven from by internal database. I asked myself, what is the quickest, easiest, most hackish way I can suck this information into a map? The answer was <a href="http://www.google.com/apis/maps/documentation/mapplets/" target="_blank">Google Mapplets</a>.
+
+The result, is an XML <a href="http://www.google.com/apis/gadgets/" target="_blank">Google Gadget</a> that is hosted on my website but runs in the context of the <a href="http://maps.google.com/" target="_blank">Google Maps</a> site and <a href="http://en.wikipedia.org/wiki/Screen_scraping" target="_blank">screen scrapes</a> the DTEI's HTML using JavaScript. <a href="http://www.worsethanfailure.com/" target="_blank">Worse Than Failure</a> would be proud.
+
+If you'd like to try it yourself, the <a href="http://www.codeassassin.com/exp/rwm.xml" target="_blank">gadget xml file is here</a>. You should be able to open Google Maps, click the My Maps tab and choose Add Content where you will be taken to the directory. Choose the Add By URL and paste the link to my xml file.
+
+I might tidy up the abomination that is my JavaScript code if anyone cares enough and submit the gadget to the public Google directory. I am also considering implementing the gadget in <a href="http://www.popfly.com/" target="_blank">Popfly</a> but I am waiting on being able to sign-in to that site.
+
+]]&gt;
