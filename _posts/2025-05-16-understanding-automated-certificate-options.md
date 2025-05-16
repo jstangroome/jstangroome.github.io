@@ -20,8 +20,12 @@ aware of all the options, some scenarios where 47-day certificates seemed daunti
 Naturally we can still obtain certificates through manual processes which I've always found tedious and error prone.
 I'm sure this option will continue to exist for some time yet, but clearly automation is the path to consistently reliable certificate renewal on a near monthly cadence.
 
-The most important point I'd like to make is that while Let's Encrypt popularised the Automatic Certificate Management Environment (ACME) protocol, it is now an 
-IETF RFC, [RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555), supported by at least five major Certificate Authorities (CAs) at the time of writing.
+The most important point I'd like to make is that while [Let's Encrypt](https://letsencrypt.org/)
+popularised the Automatic Certificate Management Environment (ACME) protocol, it is now an 
+IETF RFC, [RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555), supported by at least five major Certificate Authorities (CAs) at the time of writing,
+examples include [ZeroSSL](https://zerossl.com/documentation/acme/),
+[SSL.com](https://www.ssl.com/how-to/order-free-90-day-ssl-tls-certificates-with-acme/) and
+[Google Trust Services](https://security.googleblog.com/2023/05/google-trust-services-acme-api_0503894189.html).
 
 Let's Encrypt have also open-sourced their [boulder](https://github.com/letsencrypt/boulder) implementation of the ACME CA backend, licensed for other CAs to either
 adopt or learn from, so we should expect more CAs to support ACME too in the coming years. This also means that internal PKI infrastructure should also be empowered
@@ -58,7 +62,7 @@ DNS-01 does not require the service to speak any particular protocol on any part
 
 The shortcomings for DNS-01 however include:
 - the certificate requester must be authorized to very quickly modify the corresponding DNS TXT record. This could technically be done manually but typically involves API automation of the DNS service. There are good patterns for authorizing an operator to only modify the specific record needed for ACME instead of an entire DNS zone but in practice I've found many environments still have antiquated DNS management practices that inhibit this.
-- the DNS TXT record must be resolvable via public authoritative Internet-facing DNS. For internal services, split-horizon DNS may be needed to support DNS-01 challenges. If you're concerned about leaking the name of your internal service via public DNS, using a public CA already means your service name will appear in Certificate Transparency logs which are much more discoverable than short-lived public DNS TXT records.
+- the DNS TXT record must be resolvable via public authoritative Internet-facing DNS. For internal services, [split-horizon DNS](https://en.wikipedia.org/wiki/Split-horizon_DNS) (where the same DNS name resolves differently inside and outside the network) may be needed to support DNS-01 challenges. If you're concerned about leaking the name of your internal service via public DNS, using a public CA already means your service name will appear in [Certificate Transparency](https://en.wikipedia.org/wiki/Certificate_Transparency) logs which are much more discoverable than short-lived public DNS TXT records.
 
 My personal preference is to use DNS-01 first, then fallback to TLS-ALPN-01, then HTTP-01 as a last resort.
 
