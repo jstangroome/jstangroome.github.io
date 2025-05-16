@@ -60,6 +60,9 @@ The shortcomings for DNS-01 however include:
 - the certificate requester must be authorized to very quickly modify the corresponding DNS TXT record. This could technically be done manually but typically involves API automation of the DNS service. There are good patterns for authorizing an operator to only modify the specific record needed for ACME instead of an entire DNS zone but in practice I've found many environments still have antiquated DNS management practices that inhibit this.
 - the DNS TXT record must be resolvable via public authoritative Internet-facing DNS. For internal services, split-horizon DNS may be needed to support DNS-01 challenges. If you're concerned about leaking the name of your internal service via public DNS, using a public CA already means your service name will appear in Certificate Transparency logs which are much more discoverable than short-lived public DNS TXT records.
 
-My personal preference is to use DNS-01 first, then fallback to TLS-ALPN-01, then HTTP-01 as a last resort. I've been using ACME for certificate management for long enough that I don't
-even consider manually procured certificates anymore. I believe that for most use cases, if you start to take an ACME-first mindset to certificate management, you too will soon wonder
+My personal preference is to use DNS-01 first, then fallback to TLS-ALPN-01, then HTTP-01 as a last resort.
+
+In a previous job my team and I built and operated a platform using ACME to manage the issuance and renewal of tens of thousands of certificates every 60 to 90 days across over 40 datacenters. As a result I've become comfortable enough with ACME that I don't even consider manually procured certificates anymore, no matter if it's for production, development, or any environment in between.
+
+I believe that for most use cases, if you start to take an ACME-first mindset to certificate management, you too will soon wonder
 why you previously bothered with manual certificates.
