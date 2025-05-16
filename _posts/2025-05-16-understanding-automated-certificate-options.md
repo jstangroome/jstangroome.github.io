@@ -21,7 +21,7 @@ Naturally we can still obtain certificates through manual processes which I've a
 I'm sure this option will continue to exist for some time yet, but clearly automation is the path to consistently reliable certificate renewal on a near monthly cadence.
 
 The most important point I'd like to make is that while Let's Encrypt popularised the Automatic Certificate Management Environment (ACME) protocol, it is now an 
-[IETF RFC](https://datatracker.ietf.org/doc/html/rfc8555) supported by at least five major Certificate Authorities (CAs) at the time of writing.
+IETF RFC, [RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555), supported by at least five major Certificate Authorities (CAs) at the time of writing.
 
 Let's Encrypt have also open-sourced their [boulder](https://github.com/letsencrypt/boulder) implementation of the ACME CA backend, licensed for other CAs to either
 adopt or learn from, so we should expect more CAs to support ACME too in the coming years. This also means that internal PKI infrastructure should also be empowered
@@ -39,7 +39,8 @@ The benefit of HTTP-01 is that the certificate requester only needs to control t
 - the server must speak HTTP on TCP port 80 on the public Internet and be accessible from at least two discrete network vantage points from typically undisclosed source IPs, so this is not suitable for services that don't speak HTTP, don't use TCP port 80, and/or cannot be expose to the public Internet.
 - for load-balanced and/or multi-location services, the ACME challenge requests can be routed anywhere and adds some complexity implementing the challenge responses.
 
-Another challenge option is `TLS-ALPN-01`, where the CA resolves domain the same as HTTP-01 but then connects to TCP port 443 and sends a TLS Client Hello with a specific ALPN value and
+Another challenge option is `TLS-ALPN-01`, described in [RFC 8737](https://datatracker.ietf.org/doc/html/rfc8737),
+where the CA resolves domain the same as HTTP-01 but then connects to TCP port 443 and sends a TLS Client Hello with a specific ALPN value and
 expects a corresponding TLS Server Hello response.
 
 Like HTTP-01, TLS-ALPN-01 still only requires control of the server for the domain, but now does not require plain-text HTTP to be open to the public Internet, and can
