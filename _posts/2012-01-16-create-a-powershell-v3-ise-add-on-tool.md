@@ -1,7 +1,6 @@
 ---
 permalink: /2012/01/16/create-a-powershell-v3-ise-add-on-tool/
 title: Create a PowerShell v3 ISE Add-on Tool
-description: None
 date: 2012-01-15 23:38:27 -0000
 last_modified_at: 2012-01-16 04:14:15 -0000
 publish: true

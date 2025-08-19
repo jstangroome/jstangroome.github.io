@@ -1,7 +1,6 @@
 ---
 permalink: /2017/09/12/finding-deleted-code-in-git/
 title: Finding deleted code in git
-description: None
 date: 2017-09-12 11:38:44 -0000
 last_modified_at: 2017-09-12 11:38:44 -0000
 publish: true

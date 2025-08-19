@@ -1,7 +1,6 @@
 ---
 permalink: /2007/08/02/powershell-registry-find-and-replace/
 title: PowerShell Registry Find and Replace
-description: None
 date: 2007-08-02 03:18:09 -0000
 last_modified_at: 2010-07-18 22:34:28 -0000
 publish: true

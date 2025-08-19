@@ -1,7 +1,6 @@
 ---
 permalink: /2017/10/04/lessons-from-digitalocean-networking/
 title: Lessons from DigitalOcean Networking
-description: None
 date: 2017-10-04 08:24:14 -0000
 last_modified_at: 2017-12-12 22:01:02 -0000
 publish: true

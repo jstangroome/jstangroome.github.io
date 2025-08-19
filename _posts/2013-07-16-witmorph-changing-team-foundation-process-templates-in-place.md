@@ -1,7 +1,6 @@
 ---
 permalink: /2013/07/16/witmorph-changing-team-foundation-process-templates-in-place/
 title: WitMorph - changing Team Foundation process templates in-place
-description: None
 date: 2013-07-16 06:02:52 -0000
 last_modified_at: 2014-02-11 20:15:20 -0000
 publish: true

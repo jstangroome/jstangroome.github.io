@@ -1,7 +1,6 @@
 ---
 permalink: /2014/02/10/powershell-select-xml-versus-get-content/
 title: PowerShell Select-Xml versus Get-Content
-description: None
 date: 2014-02-10 12:29:32 -0000
 last_modified_at: 2014-02-10 12:29:32 -0000
 publish: true

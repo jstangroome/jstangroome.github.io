@@ -1,7 +1,6 @@
 ---
 permalink: /2013/07/28/avoid-password-management-with-group-managed-service-accounts/
 title: Avoid password management with Group Managed Service Accounts
-description: None
 date: 2013-07-28 07:17:02 -0000
 last_modified_at: 2013-07-29 09:34:44 -0000
 publish: true

@@ -1,7 +1,6 @@
 ---
 permalink: /2013/11/26/nuget-reference-paths-for-projects-in-multiple-solutions/
 title: NuGet Reference Paths for Projects in Multiple Solutions
-description: None
 date: 2013-11-26 09:11:13 -0000
 last_modified_at: 2013-11-26 09:11:13 -0000
 publish: true

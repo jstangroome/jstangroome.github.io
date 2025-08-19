@@ -1,7 +1,6 @@
 ---
 permalink: /2011/09/06/queue-another-team-build-when-one-team-build-succeeds/
 title: Queue another Team Build when one Team Build succeeds
-description: None
 date: 2011-09-06 06:26:46 -0000
 last_modified_at: 2014-02-19 10:07:53 -0000
 publish: true

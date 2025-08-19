@@ -1,7 +1,6 @@
 ---
 permalink: /2011/03/23/executing-individual-powershell-commands-using-net-4/
 title: Executing individual PowerShell 2 commands using .NET 4
-description: None
 date: 2011-03-23 09:34:27 -0000
 last_modified_at: 2013-08-13 22:38:47 -0000
 publish: true

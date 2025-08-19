@@ -1,7 +1,6 @@
 ---
 permalink: /2013/07/16/witmorph-walkthrough/
 title: WitMorph - Walkthrough a Conversion
-description: None
 date: 2013-07-16 07:02:15 -0000
 last_modified_at: 2014-01-28 08:07:42 -0000
 publish: true

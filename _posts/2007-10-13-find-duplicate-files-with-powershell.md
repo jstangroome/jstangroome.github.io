@@ -1,7 +1,6 @@
 ---
 permalink: /2007/10/13/find-duplicate-files-with-powershell/
 title: Find Duplicate Files With PowerShell
-description: None
 date: 2007-10-13 03:27:20 -0000
 last_modified_at: 2012-04-03 00:29:36 -0000
 publish: true

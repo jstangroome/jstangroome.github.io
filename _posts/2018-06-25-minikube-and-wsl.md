@@ -1,7 +1,6 @@
 ---
 permalink: /2018/06/25/minikube-and-wsl/
 title: minikube and WSL
-description: None
 date: 2018-06-25 12:54:14 -0000
 last_modified_at: 2018-06-26 04:56:28 -0000
 publish: true

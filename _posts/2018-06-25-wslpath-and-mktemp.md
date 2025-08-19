@@ -1,7 +1,6 @@
 ---
 permalink: /2018/06/25/wslpath-and-mktemp/
 title: wslpath and mktemp
-description: None
 date: 2018-06-25 05:17:23 -0000
 last_modified_at: 2018-06-26 22:46:47 -0000
 publish: true

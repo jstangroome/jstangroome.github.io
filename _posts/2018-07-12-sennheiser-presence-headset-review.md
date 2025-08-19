@@ -1,7 +1,6 @@
 ---
 permalink: /2018/07/12/sennheiser-presence-headset-review/
 title: Sennheiser Presence headset review
-description: None
 date: 2018-07-12 04:24:13 -0000
 last_modified_at: 2019-07-02 06:37:29 -0000
 publish: true

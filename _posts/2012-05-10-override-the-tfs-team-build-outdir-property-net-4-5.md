@@ -1,7 +1,6 @@
 ---
 permalink: /2012/05/10/override-the-tfs-team-build-outdir-property-net-4-5/
 title: Override the TFS Team Build OutDir property in .NET 4.5
-description: None
 date: 2012-05-10 05:35:14 -0000
 last_modified_at: 2014-02-10 09:02:19 -0000
 publish: true

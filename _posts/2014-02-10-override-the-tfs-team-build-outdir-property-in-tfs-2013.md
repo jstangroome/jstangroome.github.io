@@ -1,7 +1,6 @@
 ---
 permalink: /2014/02/10/override-the-tfs-team-build-outdir-property-in-tfs-2013/
 title: Override the TFS Team Build OutDir property in TFS 2013
-description: None
 date: 2014-02-09 20:22:24 -0000
 last_modified_at: 2014-02-09 20:22:24 -0000
 publish: true

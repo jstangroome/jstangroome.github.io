@@ -1,7 +1,6 @@
 ---
 permalink: /2017/12/05/inspecting-docker-container-processes-from-the-host/
 title: Inspecting Docker container processes from the host
-description: None
 date: 2017-12-05 08:19:54 -0000
 last_modified_at: 2017-12-05 08:19:54 -0000
 publish: true

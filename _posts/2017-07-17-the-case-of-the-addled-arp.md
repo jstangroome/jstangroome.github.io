@@ -1,7 +1,6 @@
 ---
 permalink: /2017/07/17/the-case-of-the-addled-arp/
 title: The case of the addled ARP
-description: None
 date: 2017-07-17 12:09:11 -0000
 last_modified_at: 2017-07-17 12:09:11 -0000
 publish: true

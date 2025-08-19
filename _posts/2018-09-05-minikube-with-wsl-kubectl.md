@@ -1,7 +1,6 @@
 ---
 permalink: /2018/09/05/minikube-with-wsl-kubectl/
 title: minikube with WSL kubectl
-description: None
 date: 2018-09-04 22:56:37 -0000
 last_modified_at: 2018-10-02 04:08:34 -0000
 publish: true
