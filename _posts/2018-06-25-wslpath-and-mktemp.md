@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2018/06/25/wslpath-and-mktemp/
+permalink: /2018/06/25/wslpath-and-mktemp/
 title: wslpath and mktemp
 description: None
 date: 2018-06-25 05:17:23 -0000

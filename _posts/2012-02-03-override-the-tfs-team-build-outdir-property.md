@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2012/02/03/override-the-tfs-team-build-outdir-property/
+permalink: /2012/02/03/override-the-tfs-team-build-outdir-property/
 title: Override the TFS Team Build OutDir property
 description: None
 date: 2012-02-03 04:02:37 -0000

@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2013/08/02/powershell-update-help-and-an-authenticating-proxy/
+permalink: /2013/08/02/powershell-update-help-and-an-authenticating-proxy/
 title: PowerShell Update-Help and an Authenticating Proxy
 description: None
 date: 2013-08-01 22:24:41 -0000

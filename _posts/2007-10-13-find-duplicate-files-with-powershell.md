@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2007/10/13/find-duplicate-files-with-powershell/
+permalink: /2007/10/13/find-duplicate-files-with-powershell/
 title: Find Duplicate Files With PowerShell
 description: None
 date: 2007-10-13 03:27:20 -0000

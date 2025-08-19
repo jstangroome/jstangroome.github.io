@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2018/09/05/minikube-with-wsl-kubectl/
+permalink: /2018/09/05/minikube-with-wsl-kubectl/
 title: minikube with WSL kubectl
 description: None
 date: 2018-09-04 22:56:37 -0000

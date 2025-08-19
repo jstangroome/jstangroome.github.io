@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2007/08/02/powershell-registry-find-and-replace/
+permalink: /2007/08/02/powershell-registry-find-and-replace/
 title: PowerShell Registry Find and Replace
 description: None
 date: 2007-08-02 03:18:09 -0000

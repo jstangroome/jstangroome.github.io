@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2010/08/03/create-scvmm-templates-with-powershell/
+permalink: /2010/08/03/create-scvmm-templates-with-powershell/
 title: Create SCVMM Templates with PowerShell
 description: None
 date: 2010-08-03 12:32:06 -0000

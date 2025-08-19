@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2013/07/28/avoid-password-management-with-group-managed-service-accounts/
+permalink: /2013/07/28/avoid-password-management-with-group-managed-service-accounts/
 title: Avoid password management with Group Managed Service Accounts
 description: None
 date: 2013-07-28 07:17:02 -0000

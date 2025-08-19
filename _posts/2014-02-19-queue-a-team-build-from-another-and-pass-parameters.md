@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2014/02/19/queue-a-team-build-from-another-and-pass-parameters/
+permalink: /2014/02/19/queue-a-team-build-from-another-and-pass-parameters/
 title: Queue a Team Build from another and pass parameters
 description: None
 date: 2014-02-19 10:05:32 -0000

@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2018/06/25/minikube-and-wsl/
+permalink: /2018/06/25/minikube-and-wsl/
 title: minikube and WSL
 description: None
 date: 2018-06-25 12:54:14 -0000

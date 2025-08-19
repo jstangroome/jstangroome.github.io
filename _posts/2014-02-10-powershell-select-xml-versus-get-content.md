@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2014/02/10/powershell-select-xml-versus-get-content/
+permalink: /2014/02/10/powershell-select-xml-versus-get-content/
 title: PowerShell Select-Xml versus Get-Content
 description: None
 date: 2014-02-10 12:29:32 -0000

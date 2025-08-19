@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2017/07/17/the-case-of-the-addled-arp/
+permalink: /2017/07/17/the-case-of-the-addled-arp/
 title: The case of the addled ARP
 description: None
 date: 2017-07-17 12:09:11 -0000

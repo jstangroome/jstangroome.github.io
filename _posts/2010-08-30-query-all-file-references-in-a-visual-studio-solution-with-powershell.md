@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2010/08/30/query-all-file-references-in-a-visual-studio-solution-with-powershell/
+permalink: /2010/08/30/query-all-file-references-in-a-visual-studio-solution-with-powershell/
 title: Query all file references in a Visual Studio solution with PowerShell
 description: None
 date: 2010-08-30 09:52:06 -0000

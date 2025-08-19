@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2011/03/23/executing-individual-powershell-commands-using-net-4/
+permalink: /2011/03/23/executing-individual-powershell-commands-using-net-4/
 title: Executing individual PowerShell 2 commands using .NET 4
 description: None
 date: 2011-03-23 09:34:27 -0000

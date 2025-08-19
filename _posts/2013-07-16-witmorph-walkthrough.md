@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2013/07/16/witmorph-walkthrough/
+permalink: /2013/07/16/witmorph-walkthrough/
 title: WitMorph - Walkthrough a Conversion
 description: None
 date: 2013-07-16 07:02:15 -0000

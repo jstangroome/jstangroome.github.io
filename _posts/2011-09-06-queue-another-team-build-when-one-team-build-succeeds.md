@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2011/09/06/queue-another-team-build-when-one-team-build-succeeds/
+permalink: /2011/09/06/queue-another-team-build-when-one-team-build-succeeds/
 title: Queue another Team Build when one Team Build succeeds
 description: None
 date: 2011-09-06 06:26:46 -0000

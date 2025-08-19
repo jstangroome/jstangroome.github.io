@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2012/05/17/powershell-remoting-user-profiles-delegation-and-dpapi/
+permalink: /2012/05/17/powershell-remoting-user-profiles-delegation-and-dpapi/
 title: PowerShell Remoting, User Profiles, Delegation and DPAPI
 description: None
 date: 2012-05-17 00:28:20 -0000

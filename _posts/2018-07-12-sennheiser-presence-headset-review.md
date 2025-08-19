@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2018/07/12/sennheiser-presence-headset-review/
+permalink: /2018/07/12/sennheiser-presence-headset-review/
 title: Sennheiser Presence headset review
 description: None
 date: 2018-07-12 04:24:13 -0000

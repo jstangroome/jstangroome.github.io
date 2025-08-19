@@ -1,5 +1,5 @@
 ---
-permalink: http://blog.stangroome.com/2017/10/04/lessons-from-digitalocean-networking/
+permalink: /2017/10/04/lessons-from-digitalocean-networking/
 title: Lessons from DigitalOcean Networking
 description: None
 date: 2017-10-04 08:24:14 -0000
